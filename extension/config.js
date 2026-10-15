@@ -7,6 +7,16 @@ export const REMOTE_URL = 'https://mjmc4498.github.io/mando/';
 // Prefijo de los identificadores de sesión en el servidor de señalización PeerJS.
 export const ID_PREFIX = 'mando-';
 
+// Worker de Cloudflare (carpeta /cloudflare) que entrega credenciales temporales del
+// servidor de retransmisión (TURN) para redes que bloquean la conexión directa.
+// Vacío = solo conexión directa.
+export const ICE_ENDPOINT = 'https://mando-turn.mjmc4498.workers.dev/ice';
+
+// Servidores públicos para la conexión directa cuando el Worker no responde.
+export const FALLBACK_ICE = {
+  iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }, { urls: 'stun:stun.l.google.com:19302' }],
+};
+
 export const DEFAULT_SETTINGS = {
   remoteUrl: '',
   laserColor: '#FF3B30',
@@ -17,6 +27,7 @@ export const DEFAULT_SETTINGS = {
   showToasts: true,
   followActiveTab: false,
   autoStart: false,
+  newCodeEachSession: true,
 };
 
 export async function getSettings() {

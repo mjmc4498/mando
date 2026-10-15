@@ -44,7 +44,7 @@ function render() {
       btn.setAttribute('aria-pressed', String(btn.dataset.value === settings[id]));
     }
   }
-  for (const id of ['clearInkOnSlide', 'showToasts', 'followActiveTab', 'autoStart']) $(id).checked = !!settings[id];
+  for (const id of ['clearInkOnSlide', 'showToasts', 'followActiveTab', 'autoStart', 'newCodeEachSession']) $(id).checked = !!settings[id];
   if (document.activeElement !== $('remoteUrl')) $('remoteUrl').value = settings.remoteUrl;
 
   const preview = $('preview');
@@ -53,7 +53,7 @@ function render() {
 }
 
 ['laserColor', 'laserSize', 'spotSize', 'nextKey'].forEach(bindChoice);
-['clearInkOnSlide', 'showToasts', 'followActiveTab', 'autoStart'].forEach(bindSwitch);
+['clearInkOnSlide', 'showToasts', 'followActiveTab', 'autoStart', 'newCodeEachSession'].forEach(bindSwitch);
 
 $('remoteUrlSave').addEventListener('click', async () => {
   const msg = $('remoteUrlMsg');

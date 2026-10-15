@@ -4,7 +4,12 @@
 
 /* global Peer */
 
+import { ICE_ENDPOINT, FALLBACK_ICE } from './config.js';
+
+const ICE_REFRESH_MS = 6 * 60 * 60 * 1000;
+
 const devices = new Map();
+let iceConfig = FALLBACK_ICE;
 let identity = null;
 let peer = null;
 let stopped = false;
@@ -29,7 +34,7 @@ function connect() {
   setStatus('connecting');
   // debug: 0 — los avisos internos de PeerJS (p. ej. «Lost connection to server»)
   // se manejan abajo; si se imprimieran, Chrome los mostraría como errores.
-  peer = new Peer(identity.peerId, { debug: 0 });
+  peer = new Peer(identity.peerId, { debug: 0, config: iceConfig });
   const current = peer;
 
   current.on('open', () => {
@@ -209,6 +214,34 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 });
 
+// ---------------------------------------------------------------- retransmisión (TURN)
+
+// Pide al Worker de Cloudflare credenciales temporales de retransmisión. Si no
+// responde, se sigue con la conexión directa de siempre.
+async function loadIce() {
+  if (!ICE_ENDPOINT) return FALLBACK_ICE;
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 4000);
+  try {
+    const res = await fetch(ICE_ENDPOINT, { signal: ctrl.signal, cache: 'no-store' });
+    if (!res.ok) throw new Error(String(res.status));
+    const data = await res.json();
+    if (!Array.isArray(data.iceServers) || !data.iceServers.length) throw new Error('sin servidores');
+    return { iceServers: data.iceServers };
+  } catch (err) {
+    console.debug('[Mando] retransmisión no disponible:', err.message);
+    return FALLBACK_ICE;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// Las credenciales caducan: se renuevan para las conexiones nuevas.
+setInterval(async () => {
+  iceConfig = await loadIce();
+  if (peer && !peer.destroyed) peer.options.config = iceConfig;
+}, ICE_REFRESH_MS);
+
 // ---------------------------------------------------------------- inicio
 
 (async () => {
@@ -217,5 +250,6 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     setStatus('error', 'identity');
     return;
   }
+  iceConfig = await loadIce();
   connect();
 })();

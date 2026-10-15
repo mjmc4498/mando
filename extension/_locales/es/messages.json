@@ -226,7 +226,7 @@
     "message": "Iniciar con Chrome"
   },
   "autoStartSub": {
-    "message": "La sesión queda lista al abrir Chrome; tu celular se reconecta solo."
+    "message": "La sesión queda lista al abrir Chrome."
   },
   "shortcut": {
     "message": "Atajo de teclado"
@@ -278,5 +278,11 @@
   },
   "saved": {
     "message": "Guardado"
+  },
+  "newCodeEachSession": {
+    "message": "Código nuevo en cada sesión"
+  },
+  "newCodeEachSessionSub": {
+    "message": "Más seguro: el QR cambia cada vez que inicias una sesión. Si lo desactivas, el código se mantiene y tu celular se reconecta solo."
   }
 }

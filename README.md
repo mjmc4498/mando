@@ -5,7 +5,7 @@
 <h1 align="center">Mando</h1>
 <p align="center">Controla tus presentaciones de Chrome desde el celular.<br>
 Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto y teclado.</p>
-<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.0.0</sub></p>
+<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0</sub></p>
 
 ---
 
@@ -17,7 +17,7 @@ Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto
 | **Puntero** | Láser con estela, foco de luz, lápiz de colores (deshacer/borrar) y *modo aire* con giroscopio. Se ve encima de la presentación incluso en pantalla completa. |
 | **Mouse remoto** | Panel táctil: mover, clic, doble clic, clic derecho (dos dedos), arrastrar y desplazamiento. |
 | **Teclado** | Escritura en vivo desde el teclado del celular y teclas especiales (Esc, Tab, flechas, ⌫, ↵). |
-| **Conexión** | WebRTC directo y cifrado; reconexión automática; código QR renovable; varios celulares a la vez. |
+| **Conexión** | WebRTC directo y cifrado; retransmisión de Cloudflare para redes restrictivas; reconexión automática; código QR nuevo en cada sesión; varios celulares a la vez. |
 | **Detalles** | Pantalla del celular siempre encendida, vibración, todo en español, modo claro/oscuro en la extensión, atajo `Alt+Shift+M`. |
 
 Probado de principio a fin (38 comprobaciones automáticas) y verificado con **Google Slides** (iniciar, avanzar, retroceder y salir del modo presentación) y **reveal.js**.
@@ -65,6 +65,7 @@ mando/
 │   └── icons/
 ├── remote/              ← control del celular (se publica en GitHub Pages)
 │   └── privacy.html     política de privacidad (URL pública para la tienda)
+├── cloudflare/          ← Worker que entrega credenciales de retransmisión (TURN)
 ├── store/               ← imágenes y textos para la ficha de la tienda (LISTING.md)
 ├── design/              logos SVG y composiciones de las imágenes de la tienda
 ├── scripts/             build.sh, render.py, capture-store.mjs
@@ -94,9 +95,10 @@ El flujo `.github/workflows/pages.yml` publica la carpeta `remote/` en cada camb
 
 ### 2. Prueba la extensión en tu Chrome
 
-1. Abre `chrome://extensions` y activa **Modo de desarrollador**.
-2. **Cargar descomprimida** → elige la carpeta `extension/`.
-3. Abre una presentación, haz clic en el ícono de Mando y escanea el QR.
+1. Ejecuta `./scripts/build.sh`.
+2. Abre `chrome://extensions`, activa **Modo de desarrollador** y pulsa **Cargar extensión sin empaquetar**.
+3. Elige la carpeta `dist/mando/` (su ruta no cambia entre versiones).
+4. Abre una presentación, haz clic en el ícono de Mando y escanea el QR.
 
 ### 3. Empaqueta
 
@@ -104,21 +106,23 @@ El flujo `.github/workflows/pages.yml` publica la carpeta `remote/` en cada camb
 ./scripts/build.sh
 ```
 
-Genera `dist/mando-1.0.0.zip` (valida manifiesto, íconos, idiomas y scripts antes de comprimir).
+Genera `dist/mando-<versión>.zip` para la tienda y la carpeta `dist/mando/` para «Cargar extensión sin empaquetar» (valida manifiesto, íconos, idiomas y scripts antes de comprimir).
 
 Para un `.crx` instalable fuera de la tienda: `./scripts/build.sh --crx` (la clave queda en `keys/mando.pem`; guárdala y no la subas a git). **La Chrome Web Store solo acepta el ZIP**; ella firma el paquete final.
 
 ### 4. Sube a la Chrome Web Store
 
 1. Entra al [Panel del desarrollador](https://chrome.google.com/webstore/devconsole) (registro único de USD 5).
-2. **Nuevo elemento** → sube `dist/mando-1.0.0.zip`.
+2. **Nuevo elemento** → sube el ZIP más reciente de `dist/` (hoy `dist/mando-1.1.0.zip`).
 3. Completa las pestañas copiando los textos de [`store/LISTING.md`](store/LISTING.md) y sube las imágenes de `store/`.
 4. **Enviar para revisión.** Como la extensión pide acceso a todos los sitios, la revisión puede tardar algunos días; las justificaciones de permisos ya están redactadas en `LISTING.md`.
 
 ### Nuevas versiones
 
-1. Sube `version` en `extension/manifest.json` (p. ej. `1.0.1`).
-2. `./scripts/build.sh` y sube el nuevo ZIP en el panel (**Paquete › Subir nuevo paquete**).
+1. Sube `version` en `extension/manifest.json` (p. ej. de `1.1.0` a `1.1.1`).
+2. Anota los cambios en `CHANGELOG.md`.
+3. `./scripts/build.sh` y sube el nuevo ZIP en el panel (**Paquete › Subir nuevo paquete**). Espera a que la versión anterior termine su revisión.
+4. En Chrome, pulsa **Actualizar** en la página de Extensiones: la carpeta `dist/mando/` siempre tiene la última versión.
 
 ## Desarrollo
 
@@ -133,6 +137,28 @@ npm run store:images        # compone las imágenes de la tienda
 
 - Vista previa del control sin computadora: `http://localhost:8765/remote/?demo` (añade `&view=pointer`, `mouse` o `keys`).
 - Prueba local con el celular: en **Ajustes › Avanzado** pon `http://<IP-de-tu-computadora>:8765/remote/` (misma red Wi-Fi).
+
+### Retransmisión con Cloudflare (redes restrictivas)
+
+Algunas redes (de empresa, hoteles, Wi-Fi públicos) bloquean la conexión directa entre el celular y la computadora. Para esos casos Mando usa el servidor TURN de **Cloudflare Realtime**, que retransmite el tráfico ya cifrado sin poder leerlo.
+
+- La carpeta `cloudflare/` contiene un **Worker** (`https://mando-turn.mjmc4498.workers.dev`) que entrega credenciales temporales (24 h). La clave de TURN vive solo como secreto del Worker; nunca está en la extensión ni en el celular.
+- La extensión y el celular piden las credenciales al conectarse. Si el Worker no responde, siguen con la conexión directa de siempre.
+- **Costo:** gratis hasta 1.000 GB al mes; Mando gasta pocos megabytes por presentación.
+
+Actualizar o volver a desplegar el Worker:
+
+```bash
+cd cloudflare
+npx wrangler deploy
+```
+
+Cambiar la clave de TURN (se crea en dash.cloudflare.com › Realtime › TURN Server):
+
+```bash
+npx wrangler secret put TURN_KEY_ID
+npx wrangler secret put TURN_KEY_API_TOKEN
+```
 
 ### Servidor de señalización propio (opcional)
 

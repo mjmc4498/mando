@@ -294,14 +294,33 @@ try {
   const overlayGone = await waitFor(() => deck.evaluate(() => !document.querySelector('mando-overlay')), { timeout: 3000 });
   check('La capa visual se retira de la presentación', !!overlayGone);
 
-  // ---------- reconexión automática al reiniciar
-  await sw({ type: 'session:start', tabId: deckTabId });
-  ok = await waitFor(() => phone.evaluate(() => document.getElementById('app').dataset.conn === 'connected'), { timeout: 30000 });
+  // ---------- QR nuevo en cada sesión (opción predeterminada)
+  const idBefore = identity.peerId;
+  const restarted = await sw({ type: 'session:start', tabId: deckTabId });
+  check('Sesión nueva → código QR nuevo', restarted?.identity?.peerId && restarted.identity.peerId !== idBefore);
+  await sleep(8000);
+  check('El código anterior deja de servir', (await phone.evaluate(() => document.getElementById('app').dataset.conn)) !== 'connected');
+
+  // ---------- con la opción desactivada, el celular se reconecta solo
+  await ctl.evaluate(async () => {
+    const { settings } = await chrome.storage.sync.get('settings');
+    await chrome.storage.sync.set({ settings: { ...(settings || {}), newCodeEachSession: false } });
+  });
+  await sleep(300);
+  const current = (await sw({ type: 'session:get' })).identity;
+  const phone2 = await (await browser.createBrowserContext()).newPage();
+  await phone2.goto(`${BASE}/remote/#id=${current.peerId}&k=${current.token}`);
+  ok = await waitFor(() => phone2.evaluate(() => document.getElementById('app').dataset.conn === 'connected'), { timeout: 30000 });
+  check('Celular conectado con el código actual', !!ok);
+  await sw({ type: 'session:stop' });
+  const kept = await sw({ type: 'session:start', tabId: deckTabId });
+  check('Con la opción desactivada, el código se mantiene', kept?.identity?.peerId === current.peerId);
+  ok = await waitFor(() => phone2.evaluate(() => document.getElementById('app').dataset.conn === 'connected'), { timeout: 30000 });
   check('El celular se reconecta solo al reiniciar la sesión', !!ok);
 
   // ---------- nuevo código revoca el anterior
   await sw({ type: 'session:reset' });
-  ok = await waitFor(() => phone.evaluate(() => document.getElementById('app').dataset.conn === 'denied'), { timeout: 8000 });
+  ok = await waitFor(() => phone2.evaluate(() => document.getElementById('app').dataset.conn === 'denied'), { timeout: 8000 });
   check('«Nuevo código» desconecta al celular', !!ok);
 
   await deck.screenshot({ path: `${OUT}/e2e-deck-final.png` });

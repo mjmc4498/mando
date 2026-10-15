@@ -346,7 +346,11 @@ async function routeToFrame(nonce, cmd, sender) {
 async function startSession(tabId) {
   await settingsReady;
   const s = await loadState();
-  if (!s.active) await patchState({ active: true, status: 'starting', error: null, devices: [] });
+  if (!s.active) {
+    // Sesión nueva: con «Código nuevo en cada sesión», el QR anterior deja de servir.
+    if (settings.newCodeEachSession) await getIdentity(true);
+    await patchState({ active: true, status: 'starting', error: null, devices: [] });
+  }
   await registerScripts();
   if (tabId != null) {
     const current = s.targetTabId != null ? await chrome.tabs.get(s.targetTabId).catch(() => null) : null;

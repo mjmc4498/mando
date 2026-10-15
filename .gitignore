@@ -4,3 +4,6 @@ dist/*.crx
 test/out/
 .DS_Store
 dist/*/
+.wrangler/
+cloudflare/.wrangler/
+cloudflare/.dev.vars

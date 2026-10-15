@@ -1,0 +1,16 @@
+# Worker de Mando: entrega credenciales temporales del servidor de retransmisión
+# (TURN) de Cloudflare a la extensión y al control del celular.
+#
+# Secretos (se configuran una sola vez, nunca van en el código):
+#   npx wrangler secret put TURN_KEY_ID
+#   npx wrangler secret put TURN_KEY_API_TOKEN
+name = "mando-turn"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[vars]
+# Orígenes web que pueden pedir credenciales (además de cualquier extensión de Chrome).
+ALLOWED_ORIGINS = "https://mjmc4498.github.io,http://localhost:8765"
+# Duración de las credenciales en segundos (24 h).
+CREDENTIAL_TTL = "86400"

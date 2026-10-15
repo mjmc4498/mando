@@ -5,7 +5,15 @@
 (() => {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
+
+  // Worker de Cloudflare que entrega credenciales temporales de retransmisión (TURN)
+  // para redes que bloquean la conexión directa.
+  const ICE_ENDPOINT = 'https://mando-turn.mjmc4498.workers.dev/ice';
+  const FALLBACK_ICE = {
+    iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }, { urls: 'stun:stun.l.google.com:19302' }],
+  };
+  const ICE_REFRESH_MS = 6 * 60 * 60 * 1000;
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const app = $('#app');
@@ -33,10 +41,10 @@
     connected: 'Conectado', connecting: 'Conectando…', reconnecting: 'Reconectando…', offline: 'Sin conexión', waiting: 'Esperando…',
     gateIdleTitle: 'Escanea el código', gateIdleBody: 'Abre la extensión Mando en Chrome y escanea el código QR con la cámara de tu celular.',
     gateConnectingTitle: 'Conectando…', gateConnectingBody: 'Buscando tu computadora.',
-    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre el panel de Mando en Chrome. Seguimos intentando automáticamente.',
+    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre el panel de Mando en Chrome. Si muestra un código nuevo, escanéalo otra vez.',
     gateOfflineTitle: 'Sin conexión', gateOfflineBody: 'Revisa la conexión a internet de tu celular.',
     gateDeniedTitle: 'Código no válido', gateDeniedBody: 'Este código fue renovado. Escanea el código nuevo desde la extensión.',
-    gateEndedTitle: 'Sesión finalizada', gateEndedBody: 'La sesión se detuvo en la computadora. Al volver a iniciarla, te reconectaremos solos.',
+    gateEndedTitle: 'Sesión finalizada', gateEndedBody: 'La sesión se detuvo en la computadora. Si al volver a iniciarla aparece un código nuevo, escanéalo.',
     gateKickedTitle: 'Desconectado', gateKickedBody: 'La computadora cerró la conexión con este celular.',
     gateUnsupportedTitle: 'Navegador no compatible', gateUnsupportedBody: 'Abre este enlace en Chrome o Safari actualizados.',
     noTarget: 'No hay ninguna pestaña para controlar',
@@ -194,7 +202,33 @@
     retryDelay = Math.min(retryDelay * 1.5, 6000);
   }
 
-  function startPeer() {
+  // Credenciales de retransmisión: si el Worker no responde, se usa la conexión directa.
+  let icePromise = null;
+  function getIce() {
+    if (!icePromise) {
+      icePromise = (async () => {
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 4000);
+        try {
+          const res = await fetch(ICE_ENDPOINT, { signal: ctrl.signal, cache: 'no-store' });
+          if (!res.ok) throw new Error(String(res.status));
+          const data = await res.json();
+          if (!Array.isArray(data.iceServers) || !data.iceServers.length) throw new Error('sin servidores');
+          setTimeout(() => { icePromise = null; }, ICE_REFRESH_MS);
+          return { iceServers: data.iceServers };
+        } catch {
+          icePromise = null;
+          return FALLBACK_ICE;
+        } finally {
+          clearTimeout(timer);
+        }
+      })();
+    }
+    return icePromise;
+  }
+
+  let startingPeer = false;
+  async function startPeer() {
     if (!session) { setConn('idle'); return; }
     if (typeof Peer === 'undefined' || !window.RTCPeerConnection) { setConn('unsupported'); return; }
     if (peer && !peer.destroyed) {
@@ -202,8 +236,13 @@
       else if (peer.open) openConn();
       return;
     }
+    if (startingPeer) return;
     if (!everConnected) setConn('connecting');
-    peer = new Peer({ debug: 1 });
+    startingPeer = true;
+    const config = await getIce();
+    startingPeer = false;
+    if (peer && !peer.destroyed) return;
+    peer = new Peer({ debug: 0, config });
     const current = peer;
     current.on('open', () => { if (current === peer) openConn(); });
     current.on('disconnected', () => {
