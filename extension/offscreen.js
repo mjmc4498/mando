@@ -27,7 +27,9 @@ function connect() {
   if (stopped) return;
   clearTimeout(retryTimer);
   setStatus('connecting');
-  peer = new Peer(identity.peerId, { debug: 1 });
+  // debug: 0 — los avisos internos de PeerJS (p. ej. «Lost connection to server»)
+  // se manejan abajo; si se imprimieran, Chrome los mostraría como errores.
+  peer = new Peer(identity.peerId, { debug: 0 });
   const current = peer;
 
   current.on('open', () => {
@@ -43,10 +45,12 @@ function connect() {
     if (stopped) return;
     switch (err.type) {
       case 'unavailable-id':
-        // El identificador sigue registrado por una instancia anterior: reintentar.
-        current.destroy();
+        // El servidor aún no liberó el identificador (instancia anterior o
+        // reconexión rápida). Si ya estuvo abierto, solo se reintenta la
+        // reconexión: destruir el peer cortaría a los celulares conectados.
         setStatus('connecting');
-        scheduleRetry(connect);
+        if (current.destroyed) scheduleRetry(connect);
+        else scheduleRetry(() => { if (!current.destroyed && current.disconnected) current.reconnect(); });
         break;
       case 'browser-incompatible':
       case 'invalid-id':
@@ -64,7 +68,7 @@ function connect() {
         else scheduleRetry(() => { if (!current.destroyed && current.disconnected) current.reconnect(); });
         break;
       default:
-        console.warn('[Mando]', err.type, err);
+        console.debug('[Mando]', err.type, err.message);
     }
   });
 }
