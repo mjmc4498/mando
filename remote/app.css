@@ -635,6 +635,11 @@ input[type="range"]::-webkit-slider-thumb {
 }
 .toast.on { opacity: 1; transform: translate(-50%, 0); }
 
+/* tablets: columna centrada del tamaño de un celular grande */
+@media (min-width: 700px) and (min-height: 600px) {
+  .app { inset: 0 max(0px, calc((100% - 600px) / 2)); }
+}
+
 /* pantallas bajas: compactar */
 @media (max-height: 640px) {
   .chip { height: 60px; }
