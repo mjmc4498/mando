@@ -57,12 +57,21 @@ export default {
 
     if (!env.TURN_KEY_ID || !env.TURN_KEY_API_TOKEN) return json({ error: 'sin-configurar' }, 503, origin);
 
+    // El ID de la clave TURN tiene 32 caracteres hexadecimales. Se extrae aunque el
+    // secreto se haya guardado con texto adicional (una URL o un comando copiado).
+    // El API Token tiene 64 caracteres hexadecimales.
+    const keyId = (String(env.TURN_KEY_ID).match(/(?<![0-9a-f])[0-9a-f]{32}(?![0-9a-f])/i) || [])[0];
+    const token = (String(env.TURN_KEY_API_TOKEN).match(/(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])/i) || [])[0];
+    if (!keyId || !token) {
+      return json({ error: 'clave-turn-invalida', revisar: [!keyId && 'TURN_KEY_ID', !token && 'TURN_KEY_API_TOKEN'].filter(Boolean) }, 503, origin);
+    }
+
     const ttl = Math.max(600, Math.min(172800, Number(env.CREDENTIAL_TTL) || 86400));
     let res;
     try {
-      res = await fetch(`${CF_API}/${env.TURN_KEY_ID}/credentials/generate-ice-servers`, {
+      res = await fetch(`${CF_API}/${keyId}/credentials/generate-ice-servers`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${env.TURN_KEY_API_TOKEN}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ ttl }),
       });
     } catch {
