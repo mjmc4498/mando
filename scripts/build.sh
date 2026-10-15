@@ -2,7 +2,8 @@
 # Empaqueta la extensión para la Chrome Web Store.
 #
 #   ./scripts/build.sh          → dist/mando-<versión>.zip   (lo que se sube a la tienda)
-#                                 dist/mando-<versión>/      (carpeta para «Cargar extensión sin empaquetar»)
+#                                 dist/mando/                (carpeta para «Cargar extensión sin empaquetar»;
+#                                                             la ruta no cambia entre versiones)
 #   ./scripts/build.sh --crx    → además dist/mando-<versión>.crx (instalación fuera de la tienda)
 #
 # La clave privada del CRX se guarda en keys/mando.pem: no la compartas ni la subas a git.
@@ -57,7 +58,7 @@ rm -f "$ZIP"
 (cd extension && zip -qr -X -9 "../$ZIP" . -x '.*' -x '*/.*' -x '__MACOSX/*')
 echo "▸ ZIP listo: $ZIP ($(du -h "$ZIP" | cut -f1))"
 
-UNPACKED="dist/mando-${VERSION}"
+UNPACKED="dist/mando"
 rm -rf "$UNPACKED"
 unzip -q "$ZIP" -d "$UNPACKED"
 echo "▸ Carpeta para «Cargar extensión sin empaquetar»: $UNPACKED"

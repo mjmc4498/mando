@@ -8,8 +8,8 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 | Campo | Valor |
 |---|---|
-| Archivo a subir | `dist/mando-1.0.0.zip` |
-| Versión | 1.0.0 |
+| Primera publicación (en revisión) | `dist/mando-1.0.0.zip` · versión 1.0.0 |
+| Actualización lista para subir | `dist/mando-1.1.0.zip` · versión 1.1.0 (ver `CHANGELOG.md`) |
 | Autor | Miguel Mogrovejo |
 
 ---
