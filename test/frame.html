@@ -1,0 +1,15 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>body{margin:0;font:13px system-ui;padding:8px} button{font-size:14px}</style></head>
+<body>
+  <b id="title"></b><br>
+  <input id="f" placeholder="input en iframe"> <button id="b">Botón iframe</button>
+  <script>
+    const cross = location.search.includes('cross');
+    document.getElementById('title').textContent = cross ? 'iframe de otro origen' : 'iframe mismo origen';
+    window.frameEvents = [];
+    const report = (s) => { window.frameEvents.push(s); if (cross) parent.postMessage({ frameLog: s }, '*'); else parent.events && parent.events.push('[same] ' + s); };
+    document.addEventListener('keydown', (e) => report(`keydown key=${e.key} keyCode=${e.keyCode}`));
+    document.getElementById('b').addEventListener('click', (e) => report('click iframe button'));
+    document.getElementById('f').addEventListener('input', (e) => report('input value=' + e.target.value));
+  </script>
+</body></html>

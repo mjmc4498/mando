@@ -1,0 +1,282 @@
+{
+  "extName": {
+    "message": "Mando: control remoto de presentaciones"
+  },
+  "extDescription": {
+    "message": "Controla tus presentaciones desde el celular: escanea un QR y usa avance, puntero láser, mouse remoto y teclado."
+  },
+  "actionTitle": {
+    "message": "Mando — controla esta presentación desde tu celular"
+  },
+  "cmdOpen": {
+    "message": "Mostrar el código QR de Mando"
+  },
+  "toastConnected": {
+    "message": "$NAME$ conectado",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "qrAlt": {
+    "message": "Código QR para conectar tu celular"
+  },
+  "scanTitle": {
+    "message": "Escanea con la cámara de tu celular"
+  },
+  "scanBody": {
+    "message": "El control se abre en el navegador del celular. No necesitas instalar nada."
+  },
+  "stoppedTitle": {
+    "message": "Sesión detenida"
+  },
+  "stoppedBody": {
+    "message": "Inicia una sesión para mostrar el código y conectar tu celular."
+  },
+  "start": {
+    "message": "Iniciar sesión"
+  },
+  "stop": {
+    "message": "Detener sesión"
+  },
+  "settings": {
+    "message": "Ajustes"
+  },
+  "controlling": {
+    "message": "Controlando"
+  },
+  "useThisTab": {
+    "message": "Controlar esta pestaña"
+  },
+  "devicesTitle": {
+    "message": "Dispositivos conectados"
+  },
+  "connected": {
+    "message": "Conectado"
+  },
+  "disconnect": {
+    "message": "Desconectar"
+  },
+  "justNow": {
+    "message": "ahora"
+  },
+  "followActive": {
+    "message": "Seguir la pestaña activa"
+  },
+  "followActiveSub": {
+    "message": "Controla siempre la pestaña que estés viendo."
+  },
+  "copyLink": {
+    "message": "Copiar enlace"
+  },
+  "copyLinkTitle": {
+    "message": "Copiar el enlace del control para abrirlo en otro dispositivo"
+  },
+  "copied": {
+    "message": "Copiado"
+  },
+  "copyFailed": {
+    "message": "No se pudo copiar"
+  },
+  "newCode": {
+    "message": "Nuevo código"
+  },
+  "newCodeTitle": {
+    "message": "Generar un código nuevo y desconectar todos los dispositivos"
+  },
+  "newCodeConfirm": {
+    "message": "¿Confirmar?"
+  },
+  "newCodeDone": {
+    "message": "Código renovado"
+  },
+  "statusStarting": {
+    "message": "Iniciando…"
+  },
+  "statusStopped": {
+    "message": "Detenido"
+  },
+  "statusConnecting": {
+    "message": "Conectando…"
+  },
+  "statusReady": {
+    "message": "Listo para escanear"
+  },
+  "statusOffline": {
+    "message": "Sin conexión"
+  },
+  "statusConnectedOne": {
+    "message": "1 celular conectado"
+  },
+  "statusConnectedMany": {
+    "message": "$COUNT$ celulares conectados",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "errorNetwork": {
+    "message": "No se pudo conectar con el servidor. Revisa tu conexión a internet; Mando seguirá reintentando."
+  },
+  "errorGeneric": {
+    "message": "No se pudo iniciar la conexión. Cierra este panel y vuelve a abrirlo."
+  },
+  "restrictedTab": {
+    "message": "Chrome no permite controlar esta página. Abre tu presentación en una pestaña normal y pulsa «Controlar esta pestaña»."
+  },
+  "optionsTitle": {
+    "message": "Mando · Ajustes"
+  },
+  "heroSubtitle": {
+    "message": "Controla tus presentaciones desde el celular: avanza diapositivas, señala con un puntero láser, dibuja, mueve el mouse y escribe."
+  },
+  "step1Title": {
+    "message": "Abre tu presentación"
+  },
+  "step1Body": {
+    "message": "Google Slides, PowerPoint web, Canva, Pitch o cualquier página en Chrome."
+  },
+  "step2Title": {
+    "message": "Escanea el código"
+  },
+  "step2Body": {
+    "message": "Haz clic en el ícono de Mando (o pulsa <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>) y escanea el QR con la cámara del celular."
+  },
+  "step3Title": {
+    "message": "Presenta"
+  },
+  "step3Body": {
+    "message": "Avanza, señala, dibuja o usa el mouse y el teclado. La conexión es directa y cifrada."
+  },
+  "secPointer": {
+    "message": "Puntero"
+  },
+  "laserColor": {
+    "message": "Color del láser"
+  },
+  "colorRed": {
+    "message": "Rojo"
+  },
+  "colorGreen": {
+    "message": "Verde"
+  },
+  "colorBlue": {
+    "message": "Azul"
+  },
+  "colorYellow": {
+    "message": "Amarillo"
+  },
+  "colorMagenta": {
+    "message": "Magenta"
+  },
+  "laserSize": {
+    "message": "Tamaño del láser"
+  },
+  "sizeS": {
+    "message": "Pequeño"
+  },
+  "sizeM": {
+    "message": "Mediano"
+  },
+  "sizeL": {
+    "message": "Grande"
+  },
+  "spotSize": {
+    "message": "Tamaño del foco"
+  },
+  "spotSizeSub": {
+    "message": "El modo foco oscurece la pantalla y resalta un círculo."
+  },
+  "secSlides": {
+    "message": "Diapositivas"
+  },
+  "nextKey": {
+    "message": "Tecla para avanzar"
+  },
+  "nextKeySub": {
+    "message": "Cámbiala si tu herramienta no responde a las flechas."
+  },
+  "keyArrows": {
+    "message": "Flechas"
+  },
+  "keyPage": {
+    "message": "Av Pág"
+  },
+  "keySpace": {
+    "message": "Espacio"
+  },
+  "clearInk": {
+    "message": "Borrar dibujos al cambiar de diapositiva"
+  },
+  "clearInkSub": {
+    "message": "Los trazos del lápiz desaparecen al avanzar o retroceder."
+  },
+  "showToasts": {
+    "message": "Avisos en pantalla"
+  },
+  "showToastsSub": {
+    "message": "Muestra un aviso discreto cuando un celular se conecta."
+  },
+  "secGeneral": {
+    "message": "General"
+  },
+  "autoStart": {
+    "message": "Iniciar con Chrome"
+  },
+  "autoStartSub": {
+    "message": "La sesión queda lista al abrir Chrome; tu celular se reconecta solo."
+  },
+  "shortcut": {
+    "message": "Atajo de teclado"
+  },
+  "shortcutSub": {
+    "message": "Puedes cambiarlo en chrome://extensions/shortcuts."
+  },
+  "shortcutNone": {
+    "message": "Sin asignar"
+  },
+  "secAdvanced": {
+    "message": "Avanzado"
+  },
+  "remoteUrl": {
+    "message": "Dirección del control remoto"
+  },
+  "remoteUrlSub": {
+    "message": "Página que se abre en el celular. Déjala vacía para usar la predeterminada."
+  },
+  "remoteUrlDefault": {
+    "message": "Se usará la dirección predeterminada."
+  },
+  "remoteUrlSaved": {
+    "message": "Dirección guardada. Abre el panel de Mando para ver el nuevo código."
+  },
+  "remoteUrlInvalid": {
+    "message": "Escribe una dirección https:// válida."
+  },
+  "save": {
+    "message": "Guardar"
+  },
+  "newCodeSub": {
+    "message": "Desconecta todos los celulares y genera un código QR distinto."
+  },
+  "secCompat": {
+    "message": "Compatibilidad"
+  },
+  "compatBody": {
+    "message": "Mando funciona con cualquier presentación que use el teclado para avanzar, entre ellas:"
+  },
+  "compatNote": {
+    "message": "Chrome no permite extensiones en páginas internas (chrome://), en la Chrome Web Store ni en el visor de PDF integrado. Para un PDF, ábrelo en Google Slides o en un visor web."
+  },
+  "madeBy": {
+    "message": "Creado por Miguel Mogrovejo"
+  },
+  "privacy": {
+    "message": "Privacidad"
+  },
+  "saved": {
+    "message": "Guardado"
+  }
+}

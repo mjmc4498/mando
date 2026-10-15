@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mando</title>
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js" type="module"></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <img src="icons/icon-32.png" width="22" height="22" alt="">
+      <span>Mando</span>
+    </div>
+    <span class="pill" id="status" data-tone="muted"><i></i><span id="status-text" data-i18n="statusStarting"></span></span>
+  </header>
+
+  <main>
+    <section class="scan" id="scan">
+      <div class="qr-card" id="qr-card">
+        <div class="qr" id="qr" role="img" data-i18n-aria="qrAlt"></div>
+        <div class="qr-loading" id="qr-loading"><span class="spinner"></span></div>
+      </div>
+      <h1 data-i18n="scanTitle"></h1>
+      <p class="muted" data-i18n="scanBody"></p>
+    </section>
+
+    <section class="stopped" id="stopped" hidden>
+      <div class="stopped-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>
+      </div>
+      <h1 data-i18n="stoppedTitle"></h1>
+      <p class="muted" data-i18n="stoppedBody"></p>
+      <button class="btn primary" id="start" data-i18n="start"></button>
+    </section>
+
+    <p class="alert" id="alert" hidden></p>
+
+    <section class="card target" id="target-card" hidden>
+      <div class="label" data-i18n="controlling"></div>
+      <div class="target-row">
+        <img id="target-icon" width="16" height="16" alt="" hidden>
+        <span class="target-fallback" id="target-fallback"></span>
+        <span class="target-title" id="target-title"></span>
+      </div>
+      <button class="btn small" id="use-tab" hidden data-i18n="useThisTab"></button>
+    </section>
+
+    <section class="card devices" id="devices-card" hidden>
+      <div class="label" data-i18n="devicesTitle"></div>
+      <ul id="devices"></ul>
+    </section>
+
+    <label class="toggle-row" id="follow-row">
+      <span>
+        <span class="toggle-title" data-i18n="followActive"></span>
+        <span class="toggle-sub muted" data-i18n="followActiveSub"></span>
+      </span>
+      <input type="checkbox" class="switch" id="follow">
+    </label>
+  </main>
+
+  <footer class="actions">
+    <button class="btn ghost" id="copy" data-i18n-title="copyLinkTitle">
+      <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+      <span data-i18n="copyLink"></span>
+    </button>
+    <button class="btn ghost" id="reset" data-i18n-title="newCodeTitle">
+      <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+      <span data-i18n="newCode"></span>
+    </button>
+    <span class="spacer"></span>
+    <button class="btn icon" id="stop" data-i18n-title="stop" data-i18n-aria="stop">
+      <svg viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>
+    </button>
+    <button class="btn icon" id="options" data-i18n-title="settings" data-i18n-aria="settings">
+      <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+    </button>
+  </footer>
+</body>
+</html>

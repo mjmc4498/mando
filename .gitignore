@@ -1,0 +1,5 @@
+node_modules/
+keys/
+dist/*.crx
+test/out/
+.DS_Store

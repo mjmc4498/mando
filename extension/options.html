@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="optionsTitle">Mando</title>
+  <link rel="icon" href="icons/icon-32.png">
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="options.css">
+  <script src="options.js" type="module"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="hero" id="bienvenida">
+      <img src="icons/icon-128.png" width="72" height="72" alt="">
+      <h1>Mando</h1>
+      <p class="muted" data-i18n="heroSubtitle"></p>
+    </header>
+
+    <section class="steps">
+      <article>
+        <span class="step-n">1</span>
+        <h3 data-i18n="step1Title"></h3>
+        <p class="muted" data-i18n="step1Body"></p>
+      </article>
+      <article>
+        <span class="step-n">2</span>
+        <h3 data-i18n="step2Title"></h3>
+        <p class="muted" data-i18n-html="step2Body"></p>
+      </article>
+      <article>
+        <span class="step-n">3</span>
+        <h3 data-i18n="step3Title"></h3>
+        <p class="muted" data-i18n="step3Body"></p>
+      </article>
+    </section>
+
+    <section class="group">
+      <h2 data-i18n="secPointer"></h2>
+      <div class="panel">
+        <div class="row">
+          <div>
+            <div class="row-title" data-i18n="laserColor"></div>
+          </div>
+          <div class="swatches" id="laserColor" role="radiogroup">
+            <button data-value="#FF3B30" style="--sw:#FF3B30" data-i18n-aria="colorRed"></button>
+            <button data-value="#34C759" style="--sw:#34C759" data-i18n-aria="colorGreen"></button>
+            <button data-value="#0A84FF" style="--sw:#0A84FF" data-i18n-aria="colorBlue"></button>
+            <button data-value="#FFD60A" style="--sw:#FFD60A" data-i18n-aria="colorYellow"></button>
+            <button data-value="#FF2D92" style="--sw:#FF2D92" data-i18n-aria="colorMagenta"></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row-title" data-i18n="laserSize"></div>
+          <div class="segmented" id="laserSize">
+            <button data-value="s" data-i18n="sizeS"></button>
+            <button data-value="m" data-i18n="sizeM"></button>
+            <button data-value="l" data-i18n="sizeL"></button>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-title" data-i18n="spotSize"></div>
+            <div class="row-sub muted" data-i18n="spotSizeSub"></div>
+          </div>
+          <div class="segmented" id="spotSize">
+            <button data-value="s" data-i18n="sizeS"></button>
+            <button data-value="m" data-i18n="sizeM"></button>
+            <button data-value="l" data-i18n="sizeL"></button>
+          </div>
+        </div>
+        <div class="preview" id="preview" aria-hidden="true">
+          <div class="preview-slide">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="preview-laser"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2 data-i18n="secSlides"></h2>
+      <div class="panel">
+        <div class="row">
+          <div>
+            <div class="row-title" data-i18n="nextKey"></div>
+            <div class="row-sub muted" data-i18n="nextKeySub"></div>
+          </div>
+          <div class="segmented" id="nextKey">
+            <button data-value="arrows" data-i18n="keyArrows"></button>
+            <button data-value="page" data-i18n="keyPage"></button>
+            <button data-value="space" data-i18n="keySpace"></button>
+          </div>
+        </div>
+        <label class="row">
+          <div>
+            <div class="row-title" data-i18n="clearInk"></div>
+            <div class="row-sub muted" data-i18n="clearInkSub"></div>
+          </div>
+          <input type="checkbox" class="switch" id="clearInkOnSlide">
+        </label>
+        <label class="row">
+          <div>
+            <div class="row-title" data-i18n="showToasts"></div>
+            <div class="row-sub muted" data-i18n="showToastsSub"></div>
+          </div>
+          <input type="checkbox" class="switch" id="showToasts">
+        </label>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2 data-i18n="secGeneral"></h2>
+      <div class="panel">
+        <label class="row">
+          <div>
+            <div class="row-title" data-i18n="followActive"></div>
+            <div class="row-sub muted" data-i18n="followActiveSub"></div>
+          </div>
+          <input type="checkbox" class="switch" id="followActiveTab">
+        </label>
+        <label class="row">
+          <div>
+            <div class="row-title" data-i18n="autoStart"></div>
+            <div class="row-sub muted" data-i18n="autoStartSub"></div>
+          </div>
+          <input type="checkbox" class="switch" id="autoStart">
+        </label>
+        <div class="row">
+          <div>
+            <div class="row-title" data-i18n="shortcut"></div>
+            <div class="row-sub muted" data-i18n="shortcutSub"></div>
+          </div>
+          <kbd id="shortcut">Alt+Shift+M</kbd>
+        </div>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2 data-i18n="secAdvanced"></h2>
+      <div class="panel">
+        <div class="row stack">
+          <div>
+            <div class="row-title" data-i18n="remoteUrl"></div>
+            <div class="row-sub muted" data-i18n="remoteUrlSub"></div>
+          </div>
+          <div class="inline">
+            <input type="url" id="remoteUrl" spellcheck="false" autocomplete="off">
+            <button class="btn" id="remoteUrlSave" data-i18n="save"></button>
+          </div>
+          <p class="field-msg" id="remoteUrlMsg"></p>
+        </div>
+        <div class="row">
+          <div>
+            <div class="row-title" data-i18n="newCode"></div>
+            <div class="row-sub muted" data-i18n="newCodeSub"></div>
+          </div>
+          <button class="btn danger" id="resetCode" data-i18n="newCode"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="group">
+      <h2 data-i18n="secCompat"></h2>
+      <div class="panel compat">
+        <p class="muted" data-i18n="compatBody"></p>
+        <ul class="chips">
+          <li>Google Slides</li><li>PowerPoint para la web</li><li>Canva</li><li>Pitch</li><li>Figma Slides</li>
+          <li>Gamma</li><li>Prezi</li><li>reveal.js</li><li>Keynote en iCloud</li><li>Genially</li>
+        </ul>
+        <p class="muted small" data-i18n="compatNote"></p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>Mando <span id="version"></span></span>
+      <span>·</span>
+      <span data-i18n="madeBy"></span>
+      <span>·</span>
+      <a id="privacy" target="_blank" rel="noopener" data-i18n="privacy"></a>
+    </footer>
+  </div>
+  <div class="saved" id="saved" data-i18n="saved"></div>
+</body>
+</html>

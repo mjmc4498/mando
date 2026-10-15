@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mando">
+  <meta name="description" content="Mando: controla tus presentaciones de Chrome desde el celular.">
+  <meta name="author" content="Miguel Mogrovejo">
+  <meta name="referrer" content="no-referrer">
+  <title>Mando</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app" id="app" data-view="slides" data-conn="connecting">
+    <header class="top">
+      <button class="status" id="status-btn" type="button">
+        <i class="dot"></i>
+        <span id="status-text"></span>
+      </button>
+      <button class="timer" id="timer" type="button" data-t-aria="timer">0:00</button>
+      <button class="icon-btn" id="open-settings" type="button" data-t-aria="settings">
+        <svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+    </header>
+    <div class="target" id="target"><span id="target-title"></span></div>
+
+    <main class="views">
+      <!-- Diapositivas -->
+      <section class="view" data-view="slides">
+        <div class="quick">
+          <button class="chip" type="button" data-nav="start">
+            <svg viewBox="0 0 24 24"><path d="M7 5.5v13a1 1 0 0 0 1.5.9l10.3-6.5a1 1 0 0 0 0-1.8L8.5 4.6A1 1 0 0 0 7 5.5z"/></svg>
+            <span data-t="present"></span>
+          </button>
+          <button class="chip" type="button" data-nav="black" id="chip-black">
+            <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2.5" class="fillable"/></svg>
+            <span data-t="black"></span>
+          </button>
+          <button class="chip" type="button" data-nav="fullscreen" id="chip-full">
+            <svg viewBox="0 0 24 24"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/></svg>
+            <span data-t="fullscreen"></span>
+          </button>
+          <button class="chip" type="button" data-nav="exit">
+            <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            <span data-t="exit"></span>
+          </button>
+        </div>
+        <button class="prev" type="button" data-nav="prev">
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+          <span data-t="previous"></span>
+        </button>
+        <button class="next" type="button" id="next">
+          <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+          <span class="next-label" data-t="next"></span>
+          <span class="next-hint" data-t="nextHint"></span>
+        </button>
+      </section>
+
+      <!-- Puntero -->
+      <section class="view" data-view="pointer">
+        <div class="segmented" id="ptr-modes">
+          <button type="button" data-mode="laser" data-t="laser"></button>
+          <button type="button" data-mode="spot" data-t="spotlight"></button>
+          <button type="button" data-mode="pen" data-t="pen"></button>
+        </div>
+        <div class="pad" id="ptr-pad">
+          <div class="pad-hint">
+            <svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10"/><path d="M12 9.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.6-2.2L4.6 16a1.6 1.6 0 0 1 2.3-2.2L9 15.5"/></svg>
+            <span id="ptr-hint"></span>
+          </div>
+          <div class="touch-dot" id="ptr-dot"></div>
+        </div>
+        <div class="pen-tools" id="pen-tools">
+          <div class="swatches" id="ink-colors">
+            <button type="button" data-color="#FF3B30" style="--sw:#FF3B30" data-t-aria="colorRed"></button>
+            <button type="button" data-color="#FFD60A" style="--sw:#FFD60A" data-t-aria="colorYellow"></button>
+            <button type="button" data-color="#34C759" style="--sw:#34C759" data-t-aria="colorGreen"></button>
+            <button type="button" data-color="#0A84FF" style="--sw:#0A84FF" data-t-aria="colorBlue"></button>
+            <button type="button" data-color="#FFFFFF" style="--sw:#FFFFFF" data-t-aria="colorWhite"></button>
+          </div>
+          <button class="tool" type="button" id="ink-undo" data-t-aria="undo">
+            <svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+          </button>
+          <button class="tool" type="button" id="ink-clear" data-t-aria="clear">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>
+          </button>
+        </div>
+        <div class="mini-nav">
+          <button type="button" data-nav="prev" data-t-aria="previous">
+            <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+          <button type="button" class="air" id="air-toggle">
+            <svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M3 8.5a10 10 0 0 0 0 7M21 8.5a10 10 0 0 1 0 7"/></svg>
+            <span data-t="air"></span>
+          </button>
+          <button type="button" data-nav="next" data-t-aria="next">
+            <svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Mouse -->
+      <section class="view" data-view="mouse">
+        <div class="pad-wrap">
+          <div class="pad" id="trackpad">
+            <div class="pad-hint">
+              <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></svg>
+              <span data-t="trackpadHint"></span>
+            </div>
+            <div class="touch-dot" id="mouse-dot"></div>
+          </div>
+          <div class="scroll-strip" id="scroll-strip" data-t-aria="scroll">
+            <svg viewBox="0 0 24 24"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg>
+          </div>
+        </div>
+        <div class="mouse-buttons">
+          <button type="button" id="m-left" data-t="click"></button>
+          <button type="button" id="m-hold" data-t="drag"></button>
+          <button type="button" id="m-right" data-t="rightClick"></button>
+        </div>
+      </section>
+
+      <!-- Teclado -->
+      <section class="view" data-view="keys">
+        <div class="kbd-wrap empty" id="kbd-wrap">
+          <textarea id="kbd" rows="3" autocomplete="off" autocapitalize="sentences" autocorrect="on" spellcheck="false" enterkeyhint="enter" data-t-aria="typeHere"></textarea>
+          <span class="kbd-ph" data-t="typeHere"></span>
+        </div>
+        <div class="keys">
+          <button type="button" data-key="Escape">Esc</button>
+          <button type="button" data-key="Tab">Tab</button>
+          <button type="button" data-key="ArrowUp" data-t-aria="arrowUp"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+          <button type="button" data-key="Backspace" data-t-aria="backspace"><svg viewBox="0 0 24 24"><path d="M9 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6-7z"/><path d="M12 10l4 4M16 10l-4 4"/></svg></button>
+          <button type="button" data-key="ArrowLeft" data-t-aria="arrowLeft"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+          <button type="button" data-key="ArrowDown" data-t-aria="arrowDown"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
+          <button type="button" data-key="ArrowRight" data-t-aria="arrowRight"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <button type="button" data-key="Enter" data-t-aria="enter"><svg viewBox="0 0 24 24"><path d="M20 5v7a3 3 0 0 1-3 3H5M9 11l-4 4 4 4"/></svg></button>
+        </div>
+        <p class="hint" data-t="typeHint"></p>
+      </section>
+    </main>
+
+    <nav class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="slides">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>
+        <span data-t="tabSlides"></span>
+      </button>
+      <button type="button" role="tab" data-tab="pointer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></svg>
+        <span data-t="tabPointer"></span>
+      </button>
+      <button type="button" role="tab" data-tab="mouse">
+        <svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></svg>
+        <span data-t="tabMouse"></span>
+      </button>
+      <button type="button" role="tab" data-tab="keys">
+        <svg viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M7.5 14h9"/></svg>
+        <span data-t="tabKeys"></span>
+      </button>
+    </nav>
+
+    <!-- Pantalla de conexión -->
+    <div class="gate" id="gate">
+      <div class="gate-inner">
+        <img src="icon.svg" class="gate-logo" width="76" height="76" alt="">
+        <h1 id="gate-title"></h1>
+        <p id="gate-body"></p>
+        <div class="spinner" id="gate-spinner"></div>
+        <button class="btn" type="button" id="gate-retry" data-t="retry" hidden></button>
+      </div>
+      <p class="gate-credit">Mando · Miguel Mogrovejo</p>
+    </div>
+
+    <!-- Ajustes -->
+    <dialog class="sheet" id="settings">
+      <form method="dialog">
+        <div class="sheet-handle"></div>
+        <h2 data-t="settings"></h2>
+        <label class="field">
+          <span class="field-row"><span data-t="sensitivity"></span><output id="sens-value"></output></span>
+          <input type="range" id="sens" min="0.4" max="2.5" step="0.1">
+        </label>
+        <label class="field field-row">
+          <span data-t="haptics"></span>
+          <input type="checkbox" class="switch" id="haptics">
+        </label>
+        <label class="field field-row">
+          <span data-t="keepAwake"></span>
+          <input type="checkbox" class="switch" id="wake">
+        </label>
+        <div class="field field-row muted">
+          <span data-t="latency"></span>
+          <span id="latency">—</span>
+        </div>
+        <button type="button" class="btn danger" id="forget" data-t="forget"></button>
+        <button type="submit" class="btn primary" value="close" data-t="done"></button>
+        <p class="credit">Mando <span id="version"></span> · <span data-t="madeBy"></span> · <a href="privacy.html" target="_blank" rel="noopener" data-t="privacy"></a></p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="peerjs.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

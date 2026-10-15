@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Presentación de prueba — Mando</title>
+  <style>
+    body { margin: 0; font: 16px system-ui, sans-serif; background: #f5f5f7; }
+    .slide { height: 60vh; display: grid; place-items: center; font-size: 48px; font-weight: 700; background: #fff; margin: 16px; border-radius: 16px; }
+    .row { display: flex; gap: 16px; padding: 0 16px; }
+    iframe { width: 360px; height: 160px; border: 2px solid #ccc; border-radius: 8px; background: #fff; }
+    #log { font: 12px monospace; white-space: pre; padding: 16px; }
+    .scroller { height: 120px; overflow: auto; width: 240px; background: #fff; border-radius: 8px; }
+    .scroller div { height: 600px; background: linear-gradient(#fff, #ddd); }
+  </style>
+</head>
+<body>
+  <div class="slide" id="slide">Diapositiva 1</div>
+  <div class="row">
+    <input id="field" placeholder="campo de texto" style="font-size:16px;padding:8px">
+    <button id="btn">Botón</button>
+    <div class="scroller" id="scroller"><div></div></div>
+    <iframe id="same" src="frame.html"></iframe>
+    <iframe id="cross"></iframe>
+  </div>
+  <div id="log"></div>
+  <script>
+    window.events = [];
+    let n = 1;
+    const slide = document.getElementById('slide');
+    const log = (s) => { window.events.push(s); document.getElementById('log').textContent = window.events.slice(-12).join('\n'); };
+    document.addEventListener('keydown', (e) => {
+      log(`top keydown key=${e.key} keyCode=${e.keyCode} trusted=${e.isTrusted}`);
+      if (e.keyCode === 39) { slide.textContent = 'Diapositiva ' + (++n); e.preventDefault(); }
+      if (e.keyCode === 37) { slide.textContent = 'Diapositiva ' + (--n); e.preventDefault(); }
+    });
+    document.getElementById('btn').addEventListener('click', (e) => log(`click btn detail=${e.detail}`));
+    document.getElementById('btn').addEventListener('contextmenu', (e) => log('contextmenu btn'));
+    document.getElementById('scroller').addEventListener('scroll', (e) => log('scroll ' + e.target.scrollTop));
+    // iframe de otro origen (127.0.0.1 vs localhost)
+    const other = location.hostname === 'localhost' ? '127.0.0.1' : 'localhost';
+    document.getElementById('cross').src = `${location.protocol}//${other}:${location.port}${location.pathname.replace(/[^/]*$/, '')}frame.html?cross`;
+    window.addEventListener('message', (e) => { if (e.data && e.data.frameLog) log('[cross] ' + e.data.frameLog); });
+  </script>
+</body>
+</html>
