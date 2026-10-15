@@ -6,7 +6,7 @@
 
 import { ICE_ENDPOINT, FALLBACK_ICE } from './config.js';
 
-const ICE_REFRESH_MS = 6 * 60 * 60 * 1000;
+const ICE_REFRESH_MS = 3 * 60 * 60 * 1000; // las credenciales duran 4 h
 
 const devices = new Map();
 let iceConfig = FALLBACK_ICE;

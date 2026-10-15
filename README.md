@@ -142,9 +142,12 @@ npm run store:images        # compone las imágenes de la tienda
 
 Algunas redes (de empresa, hoteles, Wi-Fi públicos) bloquean la conexión directa entre el celular y la computadora. Para esos casos Mando usa el servidor TURN de **Cloudflare Realtime**, que retransmite el tráfico ya cifrado sin poder leerlo.
 
-- La carpeta `cloudflare/` contiene un **Worker** (`https://mando-turn.mjmc4498.workers.dev`) que entrega credenciales temporales (24 h). La clave de TURN vive solo como secreto del Worker; nunca está en la extensión ni en el celular.
+- La carpeta `cloudflare/` contiene un **Worker** (`https://mando-turn.mjmc4498.workers.dev`) que entrega credenciales temporales (4 h). La clave de TURN vive solo como secreto del Worker; nunca está en la extensión ni en el celular.
 - La extensión y el celular piden las credenciales al conectarse. Si el Worker no responde, siguen con la conexión directa de siempre.
 - **Costo:** gratis hasta 1.000 GB al mes; Mando gasta pocos megabytes por presentación.
+- **Protección contra cobros:** cada 15 minutos el Worker mide el consumo del mes. Al llegar a **900 GB** pausa la retransmisión, revoca las credenciales activas y se reactiva solo el día 1 del mes siguiente (Mando sigue con conexión directa). Además limita los pedidos a 10 por minuto por dirección IP.
+- **Consumo del mes:** <https://mando-turn.mjmc4498.workers.dev/estado>. El límite se cambia en `MONTHLY_LIMIT_GB` (`cloudflare/wrangler.toml`).
+- **Freno de emergencia:** borra la clave en dash.cloudflare.com › Realtime › TURN Server; la retransmisión se apaga al instante.
 
 Actualizar o volver a desplegar el Worker:
 
@@ -153,11 +156,12 @@ cd cloudflare
 npx wrangler deploy
 ```
 
-Cambiar la clave de TURN (se crea en dash.cloudflare.com › Realtime › TURN Server):
+Secretos del Worker (se guardan una vez; nunca van en el código):
 
 ```bash
-npx wrangler secret put TURN_KEY_ID
-npx wrangler secret put TURN_KEY_API_TOKEN
+npx wrangler secret put TURN_KEY_ID          # ID de la clave TURN (32 caracteres)
+npx wrangler secret put TURN_KEY_API_TOKEN   # API Token de la clave TURN (64 caracteres)
+npx wrangler secret put CF_ANALYTICS_TOKEN   # token de solo lectura «Account Analytics»
 ```
 
 ### Servidor de señalización propio (opcional)

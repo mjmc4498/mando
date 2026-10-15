@@ -13,7 +13,7 @@
   const FALLBACK_ICE = {
     iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }, { urls: 'stun:stun.l.google.com:19302' }],
   };
-  const ICE_REFRESH_MS = 6 * 60 * 60 * 1000;
+  const ICE_REFRESH_MS = 3 * 60 * 60 * 1000; // las credenciales duran 4 h
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const app = $('#app');
