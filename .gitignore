@@ -3,3 +3,4 @@ keys/
 dist/*.crx
 test/out/
 .DS_Store
+dist/*/
