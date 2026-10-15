@@ -2,7 +2,7 @@
   "name": "mando",
   "version": "1.1.0",
   "private": true,
-  "description": "Mando: controla tus presentaciones de Chrome desde el celular.",
+  "description": "Presentazo: controla tus presentaciones de Chrome desde el celular.",
   "author": "Miguel Mogrovejo",
   "type": "module",
   "scripts": {

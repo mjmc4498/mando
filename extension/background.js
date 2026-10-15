@@ -1,4 +1,4 @@
-// Mando — service worker.
+// Presentazo — service worker.
 // Coordina la sesión: crea el documento offscreen que mantiene la conexión WebRTC
 // con el celular, decide qué pestaña se controla y le reenvía los comandos.
 

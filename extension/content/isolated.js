@@ -1,4 +1,4 @@
-// Mando — script de contenido (mundo aislado).
+// Presentazo — script de contenido (mundo aislado).
 // · Dibuja la capa visual: puntero láser, foco, lápiz, cursor, pantalla negra y avisos.
 // · Ejecuta clics, arrastres y desplazamientos del mouse remoto.
 // · Envía teclas y texto al marco con el foco (o al iframe correspondiente).
@@ -67,7 +67,7 @@
     return null;
   }
 
-  // Envía una orden al script de Mando dentro de un iframe de otro origen.
+  // Envía una orden al script de Presentazo dentro de un iframe de otro origen.
   // La sonda es de un solo uso: el iframe la reporta al service worker,
   // que así conoce su frameId y le entrega la orden directamente.
   function routeToFrame(frame, cmd) {
@@ -747,7 +747,7 @@
       if (msg.routed) handleRouted(msg.mando);
       else if (isTop) res = handleTop(msg.mando);
     } catch (err) {
-      console.debug('[Mando]', err);
+      console.debug('[Presentazo]', err);
     }
     sendResponse(res);
   };

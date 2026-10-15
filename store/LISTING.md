@@ -1,4 +1,6 @@
-# Ficha para la Chrome Web Store — Mando
+# Ficha para la Chrome Web Store — Presentazo
+
+> Desde la versión 1.1.0 la extensión se llama **Presentazo** (antes «Mando»). El nombre de la ficha se actualiza solo al publicarse la 1.1.0, porque sale del paquete.
 
 Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore/devconsole), listo para copiar y pegar.
 
@@ -8,7 +10,7 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 | Campo | Valor |
 |---|---|
-| Primera publicación (en revisión) | `dist/mando-1.0.0.zip` · versión 1.0.0 |
+| Primera publicación (en revisión) | `dist/mando-1.0.0.zip` · versión 1.0.0, con el nombre «Mando» |
 | Actualización lista para subir | `dist/mando-1.1.0.zip` · versión 1.1.0 (ver `CHANGELOG.md`) |
 | Autor | Miguel Mogrovejo |
 
@@ -20,7 +22,7 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 **Nombre** (viene del manifiesto, 39 caracteres)
 ```
-Mando: control remoto de presentaciones
+Presentazo: control remoto de presentaciones
 ```
 
 **Resumen** (viene del manifiesto, 112/132 caracteres)
@@ -54,7 +56,7 @@ Convierte tu celular en el control remoto de tus presentaciones. Sin apps, sin c
 
 CÓMO FUNCIONA
 1. Abre tu presentación en Chrome.
-2. Haz clic en el ícono de Mando (o pulsa Alt+Shift+M) y escanea el código QR.
+2. Haz clic en el ícono de Presentazo (o pulsa Alt+Shift+M) y escanea el código QR.
 3. El control se abre en el navegador del celular. ¡A presentar!
 
 COMPATIBLE CON
@@ -62,7 +64,7 @@ Google Slides, PowerPoint para la web, Canva, Pitch, Figma Slides, Gamma, Prezi,
 
 PRIVADO Y SEGURO
 • Conexión directa y cifrada de extremo a extremo (WebRTC) entre tu celular y tu computadora.
-• Sin cuentas, sin anuncios, sin analítica. Mando no recopila datos personales.
+• Sin cuentas, sin anuncios, sin analítica. Presentazo no recopila datos personales.
 • Los scripts solo se activan mientras hay una sesión iniciada.
 • Genera un código nuevo en cualquier momento para desconectar a todos.
 
@@ -112,7 +114,7 @@ Creado por Miguel Mogrovejo.
 
 **Descripción del propósito único**
 ```
-Mando permite controlar desde el celular la presentación abierta en una pestaña de Chrome: avanzar y retroceder diapositivas, mostrar un puntero láser o un foco, dibujar, mover un mouse remoto y escribir texto. El celular se conecta escaneando un código QR.
+Presentazo permite controlar desde el celular la presentación abierta en una pestaña de Chrome: avanzar y retroceder diapositivas, mostrar un puntero láser o un foco, dibujar, mover un mouse remoto y escribir texto. El celular se conecta escaneando un código QR.
 ```
 
 **Justificación de permisos**
@@ -124,7 +126,7 @@ Mantiene en segundo plano la conexión WebRTC con el celular del usuario. Los se
 
 `scripting`
 ```
-Registra los scripts de contenido de Mando solo mientras hay una sesión iniciada y los inyecta en la pestaña de la presentación (incluidos sus iframes) para ejecutar las órdenes del celular: teclas para cambiar de diapositiva, clics, desplazamiento, texto y la capa visual del puntero. Al detener la sesión, los scripts se desregistran.
+Registra los scripts de contenido de Presentazo solo mientras hay una sesión iniciada y los inyecta en la pestaña de la presentación (incluidos sus iframes) para ejecutar las órdenes del celular: teclas para cambiar de diapositiva, clics, desplazamiento, texto y la capa visual del puntero. Al detener la sesión, los scripts se desregistran.
 ```
 
 `storage`
@@ -134,7 +136,7 @@ Guarda los ajustes del usuario (color y tamaño del puntero, tecla de avance, et
 
 Permiso de host (`<all_urls>`)
 ```
-Las presentaciones pueden estar en cualquier sitio (Google Slides, PowerPoint para la web, Canva, Pitch, archivos locales, etc.) y a menudo dentro de iframes de otros dominios. Mando necesita acceso a la pestaña que el usuario elige controlar para simular teclas y clics y dibujar el puntero encima. No lee ni transmite el contenido de las páginas; solo envía al celular del usuario el título de la pestaña controlada.
+Las presentaciones pueden estar en cualquier sitio (Google Slides, PowerPoint para la web, Canva, Pitch, archivos locales, etc.) y a menudo dentro de iframes de otros dominios. Presentazo necesita acceso a la pestaña que el usuario elige controlar para simular teclas y clics y dibujar el puntero encima. No lee ni transmite el contenido de las páginas; solo envía al celular del usuario el título de la pestaña controlada.
 ```
 
 **¿Usas código remoto?** → **No.** Todo el JavaScript va incluido en el paquete (PeerJS y el generador de QR están en `lib/`). La conexión con el servidor de señalización de PeerJS solo intercambia datos, no código.
@@ -153,7 +155,7 @@ Y las tres certificaciones:
 
 ```
 1. Abre cualquier presentación de Google Slides (o https://revealjs.com/demo/).
-2. Haz clic en el ícono de Mando: se muestra un código QR.
+2. Haz clic en el ícono de Presentazo: se muestra un código QR.
 3. Escanéalo con un celular, o pulsa «Copiar enlace» y ábrelo en otra ventana o dispositivo.
 4. En la página que se abre, usa «Siguiente», la pestaña «Puntero», «Mouse» o «Teclado».
 No se necesita cuenta ni credenciales.

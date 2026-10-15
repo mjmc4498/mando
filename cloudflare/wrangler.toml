@@ -1,4 +1,4 @@
-# Worker de Mando: entrega credenciales temporales del servidor de retransmisión
+# Worker de Presentazo: entrega credenciales temporales del servidor de retransmisión
 # (TURN) de Cloudflare a la extensión y al control del celular, y pausa la
 # retransmisión si el consumo del mes se acerca a la cuota gratuita.
 #

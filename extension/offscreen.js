@@ -1,4 +1,4 @@
-// Mando — documento offscreen.
+// Presentazo — documento offscreen.
 // Mantiene la conexión WebRTC (PeerJS) con los celulares, valida cada mensaje
 // y lo reenvía al service worker, que lo entrega a la pestaña controlada.
 
@@ -73,7 +73,7 @@ function connect() {
         else scheduleRetry(() => { if (!current.destroyed && current.disconnected) current.reconnect(); });
         break;
       default:
-        console.debug('[Mando]', err.type, err.message);
+        console.debug('[Presentazo]', err.type, err.message);
     }
   });
 }
@@ -229,7 +229,7 @@ async function loadIce() {
     if (!Array.isArray(data.iceServers) || !data.iceServers.length) throw new Error('sin servidores');
     return { iceServers: data.iceServers };
   } catch (err) {
-    console.debug('[Mando] retransmisión no disponible:', err.message);
+    console.debug('[Presentazo] retransmisión no disponible:', err.message);
     return FALLBACK_ICE;
   } finally {
     clearTimeout(timer);

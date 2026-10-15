@@ -1,4 +1,4 @@
-// Prueba de punta a punta de Mando: extensión + página del celular conectadas por PeerJS.
+// Prueba de punta a punta de Presentazo: extensión + página del celular conectadas por PeerJS.
 // Requiere un servidor local en la raíz del proyecto:  npm run serve   (otra terminal)
 // y luego:  npm run test:e2e
 import puppeteer from 'puppeteer';
@@ -96,7 +96,7 @@ try {
     const host = document.querySelector('mando-overlay');
     return host ? true : null;
   }), { timeout: 5000 });
-  check('Aparece la capa de Mando en la presentación (aviso de conexión)', !!toastText);
+  check('Aparece la capa de Presentazo en la presentación (aviso de conexión)', !!toastText);
 
   console.log('visibilidad: deck', await deck.evaluate(() => document.visibilityState), '| phone', await phone.evaluate(() => document.visibilityState));
 
@@ -191,27 +191,27 @@ try {
   await goTo('#field');
   await cmd({ t: 'mouse', a: 'click', n: 1 });
   await sleep(150);
-  await cmd({ t: 'text', s: 'Hola Mando' });
-  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Mando', { timeout: 3000 });
+  await cmd({ t: 'text', s: 'Hola Presentazo' });
+  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Presentazo', { timeout: 3000 });
   check('Texto escrito en el campo enfocado', !!ok, await deck.evaluate(() => document.getElementById('field').value));
   await cmd({ t: 'del', n: 2 });
-  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Man', { timeout: 3000 });
+  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Presenta', { timeout: 3000 });
   check('Borrado (Backspace) remoto', !!ok, await deck.evaluate(() => document.getElementById('field').value));
 
   // Teclado del celular (escritura en vivo)
   await phone.click('.tabs [data-tab="keys"]');
   await phone.focus('#kbd');
-  await phone.keyboard.type('do!');
-  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Mando!', { timeout: 4000 });
+  await phone.keyboard.type('zo!');
+  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Presentazo!', { timeout: 4000 });
   check('Teclado del celular escribe en vivo', !!ok, await deck.evaluate(() => document.getElementById('field').value));
   await phone.keyboard.press('Backspace');
-  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Mando', { timeout: 4000 });
+  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Presentazo', { timeout: 4000 });
   check('Borrar desde el teclado del celular', !!ok);
   // Borrar con el campo del celular vacío (centinela)
   await phone.evaluate(() => { const k = document.getElementById('kbd'); k.blur(); });
   await phone.focus('#kbd');
   await phone.keyboard.press('Backspace');
-  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Mand', { timeout: 4000 });
+  ok = await waitFor(async () => (await deck.evaluate(() => document.getElementById('field').value)) === 'Hola Presentaz', { timeout: 4000 });
   check('Borrar con el campo del celular vacío', !!ok, await deck.evaluate(() => document.getElementById('field').value));
 
   // ---------- iframe del mismo origen

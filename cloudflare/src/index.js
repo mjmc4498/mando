@@ -1,4 +1,4 @@
-// Mando — Worker de credenciales TURN.
+// Presentazo — Worker de credenciales TURN.
 //
 //   GET /ice     → { iceServers, ttl }: credenciales temporales de Cloudflare Realtime TURN.
 //   GET /estado  → consumo del mes y si la retransmisión está pausada.
@@ -6,7 +6,7 @@
 // Cada 15 minutos (y al consultar /estado) se mide el consumo del mes. Si llega al
 // límite configurado, la retransmisión se pausa y se revocan las credenciales que
 // la estaban usando; se reactiva sola al empezar el mes siguiente. Mientras está
-// pausada, Mando sigue funcionando con conexión directa.
+// pausada, Presentazo sigue funcionando con conexión directa.
 
 const TURN_API = 'https://rtc.live.cloudflare.com/v1/turn/keys';
 const GRAPHQL_API = 'https://api.cloudflare.com/client/v4/graphql';
@@ -183,7 +183,7 @@ export default {
     if (request.method === 'OPTIONS') return json({}, origin ? 204 : 403, origin);
     if (request.method !== 'GET') return json({ error: 'metodo-no-permitido' }, 405, origin);
 
-    if (url.pathname === '/') return json({ servicio: 'Mando · credenciales TURN', ok: true }, 200, origin);
+    if (url.pathname === '/') return json({ servicio: 'Presentazo · credenciales TURN', ok: true }, 200, origin);
 
     if (url.pathname === '/estado') {
       if (await rateLimited(env, `estado:${ip}`)) return json({ error: 'demasiadas-solicitudes' }, 429, origin);

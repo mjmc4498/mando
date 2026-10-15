@@ -1,4 +1,4 @@
-// Mando — configuración compartida por el service worker, el popup y las opciones.
+// Presentazo — configuración compartida por el service worker, el popup y las opciones.
 
 // Página del control remoto que se abre en el celular (carpeta /remote publicada
 // en GitHub Pages). Si la publicas en otra dirección, cámbiala aquí o en Ajustes.

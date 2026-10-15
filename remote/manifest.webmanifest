@@ -1,6 +1,6 @@
 {
-  "name": "Mando — control remoto de presentaciones",
-  "short_name": "Mando",
+  "name": "Presentazo — control remoto de presentaciones",
+  "short_name": "Presentazo",
   "description": "Controla tus presentaciones de Chrome desde el celular.",
   "lang": "es",
   "start_url": "./",

@@ -1,13 +1,15 @@
 <p align="center">
-  <img src="extension/icons/icon-128.png" width="96" alt="Mando">
+  <img src="extension/icons/icon-128.png" width="96" alt="Presentazo">
 </p>
 
-<h1 align="center">Mando</h1>
+<h1 align="center">Presentazo</h1>
 <p align="center">Controla tus presentaciones de Chrome desde el celular.<br>
 Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto y teclado.</p>
-<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0</sub></p>
+<p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · antes llamado «Mando»</sub></p>
 
 ---
+
+> **Nombre:** desde la versión 1.1.0 la app se llama **Presentazo**. Las direcciones (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`) se mantienen para que la versión 1.0.0 siga funcionando.
 
 ## Funciones
 
@@ -81,7 +83,7 @@ El QR abre `https://mjmc4498.github.io/mando/`, así que esa página debe existi
 
 ```bash
 cd mando
-git init -b main && git add . && git commit -m "Mando 1.0.0"
+git init -b main && git add . && git commit -m "Presentazo 1.0.0"
 gh repo create mjmc4498/mando --public --source . --push
 gh api -X POST repos/mjmc4498/mando/pages -f build_type=workflow
 ```
@@ -98,7 +100,7 @@ El flujo `.github/workflows/pages.yml` publica la carpeta `remote/` en cada camb
 1. Ejecuta `./scripts/build.sh`.
 2. Abre `chrome://extensions`, activa **Modo de desarrollador** y pulsa **Cargar extensión sin empaquetar**.
 3. Elige la carpeta `dist/mando/` (su ruta no cambia entre versiones).
-4. Abre una presentación, haz clic en el ícono de Mando y escanea el QR.
+4. Abre una presentación, haz clic en el ícono de Presentazo y escanea el QR.
 
 ### 3. Empaqueta
 
@@ -140,12 +142,12 @@ npm run store:images        # compone las imágenes de la tienda
 
 ### Retransmisión con Cloudflare (redes restrictivas)
 
-Algunas redes (de empresa, hoteles, Wi-Fi públicos) bloquean la conexión directa entre el celular y la computadora. Para esos casos Mando usa el servidor TURN de **Cloudflare Realtime**, que retransmite el tráfico ya cifrado sin poder leerlo.
+Algunas redes (de empresa, hoteles, Wi-Fi públicos) bloquean la conexión directa entre el celular y la computadora. Para esos casos Presentazo usa el servidor TURN de **Cloudflare Realtime**, que retransmite el tráfico ya cifrado sin poder leerlo.
 
 - La carpeta `cloudflare/` contiene un **Worker** (`https://mando-turn.mjmc4498.workers.dev`) que entrega credenciales temporales (4 h). La clave de TURN vive solo como secreto del Worker; nunca está en la extensión ni en el celular.
 - La extensión y el celular piden las credenciales al conectarse. Si el Worker no responde, siguen con la conexión directa de siempre.
-- **Costo:** gratis hasta 1.000 GB al mes; Mando gasta pocos megabytes por presentación.
-- **Protección contra cobros:** cada 15 minutos el Worker mide el consumo del mes. Al llegar a **900 GB** pausa la retransmisión, revoca las credenciales activas y se reactiva solo el día 1 del mes siguiente (Mando sigue con conexión directa). Además limita los pedidos a 10 por minuto por dirección IP.
+- **Costo:** gratis hasta 1.000 GB al mes; Presentazo gasta pocos megabytes por presentación.
+- **Protección contra cobros:** cada 15 minutos el Worker mide el consumo del mes. Al llegar a **900 GB** pausa la retransmisión, revoca las credenciales activas y se reactiva solo el día 1 del mes siguiente (Presentazo sigue con conexión directa). Además limita los pedidos a 10 por minuto por dirección IP.
 - **Consumo del mes:** <https://mando-turn.mjmc4498.workers.dev/estado>. El límite se cambia en `MONTHLY_LIMIT_GB` (`cloudflare/wrangler.toml`).
 - **Freno de emergencia:** borra la clave en dash.cloudflare.com › Realtime › TURN Server; la retransmisión se apaga al instante.
 
@@ -166,7 +168,7 @@ npx wrangler secret put CF_ANALYTICS_TOKEN   # token de solo lectura «Account A
 
 ### Servidor de señalización propio (opcional)
 
-Mando usa el servidor público gratuito de PeerJS. Para no depender de él, despliega un [PeerServer](https://github.com/peers/peerjs-server) y pasa `{ host, port, path, secure }` al crear `new Peer(...)` en `extension/offscreen.js` y `remote/app.js`.
+Presentazo usa el servidor público gratuito de PeerJS. Para no depender de él, despliega un [PeerServer](https://github.com/peers/peerjs-server) y pasa `{ host, port, path, secure }` al crear `new Peer(...)` en `extension/offscreen.js` y `remote/app.js`.
 
 ## Limitaciones
 

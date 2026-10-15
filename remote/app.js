@@ -1,4 +1,4 @@
-// Mando — control remoto para el celular.
+// Presentazo — control remoto para el celular.
 // Se conecta por WebRTC (PeerJS) con la extensión de Chrome y le envía órdenes.
 
 /* global Peer */
@@ -39,9 +39,9 @@
     retry: 'Reintentar', sensitivity: 'Sensibilidad del puntero', haptics: 'Vibración', keepAwake: 'Mantener la pantalla encendida',
     latency: 'Latencia', forget: 'Olvidar esta computadora', done: 'Listo', madeBy: 'Creado por Miguel Mogrovejo', privacy: 'Privacidad',
     connected: 'Conectado', connecting: 'Conectando…', reconnecting: 'Reconectando…', offline: 'Sin conexión', waiting: 'Esperando…',
-    gateIdleTitle: 'Escanea el código', gateIdleBody: 'Abre la extensión Mando en Chrome y escanea el código QR con la cámara de tu celular.',
+    gateIdleTitle: 'Escanea el código', gateIdleBody: 'Abre la extensión Presentazo en Chrome y escanea el código QR con la cámara de tu celular.',
     gateConnectingTitle: 'Conectando…', gateConnectingBody: 'Buscando tu computadora.',
-    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre el panel de Mando en Chrome. Si muestra un código nuevo, escanéalo otra vez.',
+    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre el panel de Presentazo en Chrome. Si muestra un código nuevo, escanéalo otra vez.',
     gateOfflineTitle: 'Sin conexión', gateOfflineBody: 'Revisa la conexión a internet de tu celular.',
     gateDeniedTitle: 'Código no válido', gateDeniedBody: 'Este código fue renovado. Escanea el código nuevo desde la extensión.',
     gateEndedTitle: 'Sesión finalizada', gateEndedBody: 'La sesión se detuvo en la computadora. Si al volver a iniciarla aparece un código nuevo, escanéalo.',

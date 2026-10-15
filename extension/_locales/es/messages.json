@@ -1,15 +1,15 @@
 {
   "extName": {
-    "message": "Mando: control remoto de presentaciones"
+    "message": "Presentazo: control remoto de presentaciones"
   },
   "extDescription": {
     "message": "Controla tus presentaciones desde el celular: escanea un QR y usa avance, puntero láser, mouse remoto y teclado."
   },
   "actionTitle": {
-    "message": "Mando — controla esta presentación desde tu celular"
+    "message": "Presentazo — controla esta presentación desde tu celular"
   },
   "cmdOpen": {
-    "message": "Mostrar el código QR de Mando"
+    "message": "Mostrar el código QR de Presentazo"
   },
   "toastConnected": {
     "message": "$NAME$ conectado",
@@ -118,7 +118,7 @@
     }
   },
   "errorNetwork": {
-    "message": "No se pudo conectar con el servidor. Revisa tu conexión a internet; Mando seguirá reintentando."
+    "message": "No se pudo conectar con el servidor. Revisa tu conexión a internet; Presentazo seguirá reintentando."
   },
   "errorGeneric": {
     "message": "No se pudo iniciar la conexión. Cierra este panel y vuelve a abrirlo."
@@ -127,7 +127,7 @@
     "message": "Chrome no permite controlar esta página. Abre tu presentación en una pestaña normal y pulsa «Controlar esta pestaña»."
   },
   "optionsTitle": {
-    "message": "Mando · Ajustes"
+    "message": "Presentazo · Ajustes"
   },
   "heroSubtitle": {
     "message": "Controla tus presentaciones desde el celular: avanza diapositivas, señala con un puntero láser, dibuja, mueve el mouse y escribe."
@@ -142,7 +142,7 @@
     "message": "Escanea el código"
   },
   "step2Body": {
-    "message": "Haz clic en el ícono de Mando (o pulsa <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>) y escanea el QR con la cámara del celular."
+    "message": "Haz clic en el ícono de Presentazo (o pulsa <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>) y escanea el QR con la cámara del celular."
   },
   "step3Title": {
     "message": "Presenta"
@@ -250,7 +250,7 @@
     "message": "Se usará la dirección predeterminada."
   },
   "remoteUrlSaved": {
-    "message": "Dirección guardada. Abre el panel de Mando para ver el nuevo código."
+    "message": "Dirección guardada. Abre el panel de Presentazo para ver el nuevo código."
   },
   "remoteUrlInvalid": {
     "message": "Escribe una dirección https:// válida."
@@ -265,7 +265,7 @@
     "message": "Compatibilidad"
   },
   "compatBody": {
-    "message": "Mando funciona con cualquier presentación que use el teclado para avanzar, entre ellas:"
+    "message": "Presentazo funciona con cualquier presentación que use el teclado para avanzar, entre ellas:"
   },
   "compatNote": {
     "message": "Chrome no permite extensiones en páginas internas (chrome://), en la Chrome Web Store ni en el visor de PDF integrado. Para un PDF, ábrelo en Google Slides o en un visor web."

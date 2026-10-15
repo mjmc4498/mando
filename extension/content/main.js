@@ -1,4 +1,4 @@
-// Mando — script en el "mundo principal" de la página.
+// Presentazo — script en el "mundo principal" de la página.
 // Solo emite eventos de teclado y escribe texto: muchas apps de presentaciones
 // (Google Slides, PowerPoint web…) leen keyCode/which, propiedades que solo
 // pueden definirse desde el contexto de la propia página.
@@ -313,7 +313,7 @@
     let cmd;
     try { cmd = JSON.parse(event.detail); } catch { return; }
     if (!cmd || typeof cmd !== 'object') return;
-    try { run(cmd); } catch (err) { console.debug('[Mando]', err); }
+    try { run(cmd); } catch (err) { console.debug('[Presentazo]', err); }
   };
 
   document.addEventListener('mando:cmd', listener, true);

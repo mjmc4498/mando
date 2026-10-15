@@ -1,7 +1,7 @@
-Mando — avisos de software de terceros
+Presentazo — avisos de software de terceros
 =======================================
 
-Mando incluye dos bibliotecas de código abierto distribuidas con la licencia MIT:
+Presentazo incluye dos bibliotecas de código abierto distribuidas con la licencia MIT:
 
   • PeerJS 1.5.5 (lib/peerjs.min.js) — conexión WebRTC entre el celular y la computadora.
     © 2015 Michelle Bu y Eric Zhang — https://peerjs.com
