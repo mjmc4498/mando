@@ -65,7 +65,7 @@
     "message": "Seguir la pestaña activa"
   },
   "followActiveSub": {
-    "message": "Controla siempre la pestaña que estés viendo."
+    "message": "Controla siempre la pestaña que estés viendo. Requiere el acceso a todos los sitios."
   },
   "copyLink": {
     "message": "Copiar enlace"
@@ -284,5 +284,37 @@
   },
   "newCodeEachSessionSub": {
     "message": "Más seguro: el QR cambia cada vez que inicias una sesión. Si lo desactivas, el código se mantiene y tu celular se reconecta solo."
+  },
+  "needsAccess": {
+    "message": "Para controlar esta pestaña, ábrela y pulsa el ícono de Presentazo."
+  },
+  "embeddedTitle": {
+    "message": "Presentación incrustada"
+  },
+  "embeddedBody": {
+    "message": "La presentación está dentro de $HOSTS$. Permite el acceso a ese sitio para controlarla.",
+    "placeholders": {
+      "hosts": {
+        "content": "$1"
+      }
+    }
+  },
+  "embeddedAllow": {
+    "message": "Permitir acceso"
+  },
+  "allSites": {
+    "message": "Acceso a todos los sitios"
+  },
+  "allSitesOn": {
+    "message": "Permitido: Presentazo puede actuar en cualquier pestaña mientras haya una sesión."
+  },
+  "allSitesOff": {
+    "message": "No permitido (recomendado): Presentazo solo actúa en la pestaña donde pulsas su ícono."
+  },
+  "allSitesGrant": {
+    "message": "Permitir"
+  },
+  "allSitesRevoke": {
+    "message": "Quitar acceso"
   }
 }

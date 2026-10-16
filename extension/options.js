@@ -53,7 +53,39 @@ function render() {
 }
 
 ['laserColor', 'laserSize', 'spotSize', 'nextKey'].forEach(bindChoice);
-['clearInkOnSlide', 'showToasts', 'followActiveTab', 'autoStart', 'newCodeEachSession'].forEach(bindSwitch);
+['clearInkOnSlide', 'showToasts', 'autoStart', 'newCodeEachSession'].forEach(bindSwitch);
+
+// Acceso a todos los sitios: opcional. Sin él, Presentazo solo actúa en la pestaña
+// donde se pulsa su ícono (activeTab).
+const ALL_SITES = { origins: ['<all_urls>'] };
+let allSites = false;
+
+async function renderAccess() {
+  allSites = await chrome.permissions.contains(ALL_SITES).catch(() => false);
+  $('allSitesSub').textContent = t(allSites ? 'allSitesOn' : 'allSitesOff');
+  $('allSitesBtn').textContent = t(allSites ? 'allSitesRevoke' : 'allSitesGrant');
+}
+
+$('allSitesBtn').addEventListener('click', async () => {
+  if (allSites) await chrome.permissions.remove(ALL_SITES).catch(() => {});
+  else await chrome.permissions.request(ALL_SITES).catch(() => {});
+  renderAccess();
+});
+
+// «Seguir la pestaña activa» necesita ese acceso: se pide en el mismo clic.
+$('followActiveTab').addEventListener('change', async (e) => {
+  const on = e.target.checked;
+  if (on && !(await chrome.permissions.request(ALL_SITES).catch(() => false))) {
+    e.target.checked = false;
+    return;
+  }
+  await save({ followActiveTab: on });
+  renderAccess();
+});
+
+chrome.permissions.onAdded.addListener(renderAccess);
+chrome.permissions.onRemoved.addListener(renderAccess);
+renderAccess();
 
 $('remoteUrlSave').addEventListener('click', async () => {
   const msg = $('remoteUrlMsg');

@@ -668,6 +668,24 @@
 
   let overlay = isTop ? new Overlay() : null;
 
+  // Sitios de otros dominios incrustados en la página con un tamaño relevante
+  // (p. ej. PowerPoint para la web dentro de OneDrive). Se ignoran anuncios y
+  // marcos pequeños.
+  function embeddedOrigins() {
+    const minArea = innerWidth * innerHeight * 0.15;
+    const focused = crossOriginFocusFrame();
+    const origins = new Set();
+    for (const frame of document.querySelectorAll('iframe, frame')) {
+      const r = frame.getBoundingClientRect();
+      if (sameOriginDoc(frame) || (frame !== focused && r.width * r.height < minArea)) continue;
+      try {
+        const url = new URL(frame.src, location.href);
+        if (/^https?:$/.test(url.protocol) && url.origin !== location.origin) origins.add(url.origin);
+      } catch {}
+    }
+    return [...origins];
+  }
+
   // ------------------------------------------------------------ órdenes
 
   const SLIDE_NAV = new Set(['next', 'prev', 'first', 'last']);
@@ -717,6 +735,8 @@
       case 'toast':
         overlay.toast(cmd.text);
         break;
+      case 'frames':
+        return { ok: true, frames: embeddedOrigins() };
       case 'reset':
         overlay.destroy();
         overlay = new Overlay();

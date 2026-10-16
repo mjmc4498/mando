@@ -82,7 +82,7 @@ function render() {
   // Avisos
   let alert = '';
   if (state.active && state.status === 'error') alert = state.error === 'network' ? t('errorNetwork') : t('errorGeneric');
-  else if (state.active && target && !target.ok) alert = t('restrictedTab');
+  else if (state.active && target && !target.ok) alert = target.reason === 'access' ? t('needsAccess') : t('restrictedTab');
   $('alert').hidden = !alert;
   $('alert').textContent = alert;
 
@@ -141,11 +141,38 @@ $('stop').addEventListener('click', async () => {
 $('use-tab').addEventListener('click', async () => {
   snap = await sw('target:set', { tabId: currentTab.id });
   render();
+  checkEmbedded();
 });
 
+// «Seguir la pestaña activa» necesita acceso a todos los sitios: se pide en el
+// mismo clic (Chrome exige un gesto del usuario).
+const ALL_SITES = { origins: ['<all_urls>'] };
 $('follow').addEventListener('change', async (e) => {
-  settings = await saveSettings({ followActiveTab: e.target.checked });
+  const on = e.target.checked;
+  if (on && !(await chrome.permissions.request(ALL_SITES).catch(() => false))) {
+    e.target.checked = false;
+    return;
+  }
+  settings = await saveSettings({ followActiveTab: on });
   setTimeout(refresh, 300);
+});
+
+// Presentación incrustada desde otro sitio: ofrece permitir ese sitio.
+let embeddedPatterns = [];
+async function checkEmbedded() {
+  const res = await sw('frames:missing').catch(() => null);
+  embeddedPatterns = res?.patterns || [];
+  const hosts = embeddedPatterns.map((p) => p.replace(/^https?:\/\//, '').replace(/\/\*$/, ''));
+  $('embedded-card').hidden = !embeddedPatterns.length;
+  if (hosts.length) $('embedded-text').textContent = t('embeddedBody', [hosts.join(', ')]);
+}
+
+$('embedded-allow').addEventListener('click', async () => {
+  if (!embeddedPatterns.length) return;
+  const granted = await chrome.permissions.request({ origins: embeddedPatterns }).catch(() => false);
+  if (!granted) return;
+  await sw('frames:inject');
+  $('embedded-card').hidden = true;
 });
 
 $('copy').addEventListener('click', async () => {
@@ -188,7 +215,9 @@ chrome.storage.onChanged.addListener((changes, area) => {
   }
 });
 
-// Abrir el popup inicia (o reanuda) la sesión sobre la pestaña actual.
+// Abrir el popup inicia (o reanuda) la sesión sobre la pestaña actual. Pulsar el
+// ícono da acceso a esa pestaña (activeTab).
 snap = await sw('session:start', { tabId: currentTab?.id });
 render();
+checkEmbedded();
 setInterval(render, 30000);

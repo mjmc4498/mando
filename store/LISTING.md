@@ -20,7 +20,7 @@ Todo lo que pide el [Panel del desarrollador](https://chrome.google.com/webstore
 
 ### Idioma: Español
 
-**Nombre** (viene del manifiesto, 39 caracteres)
+**Nombre** (viene del manifiesto, 44/75 caracteres)
 ```
 Presentazo: control remoto de presentaciones
 ```
@@ -62,11 +62,15 @@ CÓMO FUNCIONA
 COMPATIBLE CON
 Google Slides, PowerPoint para la web, Canva, Pitch, Figma Slides, Gamma, Prezi, reveal.js, Keynote en iCloud y cualquier página que use el teclado para avanzar.
 
+FUNCIONA EN CUALQUIER RED
+• Conexión directa entre tu celular y tu computadora, en la misma red Wi-Fi o desde datos móviles.
+• Si la red de tu empresa, hotel o evento bloquea la conexión directa, Presentazo usa el servidor de retransmisión de Cloudflare, igual de cifrado.
+
 PRIVADO Y SEGURO
-• Conexión directa y cifrada de extremo a extremo (WebRTC) entre tu celular y tu computadora.
+• Conexión cifrada de extremo a extremo (WebRTC) entre tu celular y tu computadora.
 • Sin cuentas, sin anuncios, sin analítica. Presentazo no recopila datos personales.
-• Los scripts solo se activan mientras hay una sesión iniciada.
-• Genera un código nuevo en cualquier momento para desconectar a todos.
+• Solo actúa en la pestaña donde pulsas su ícono: no pide acceso a todos tus sitios.
+• Código QR nuevo en cada sesión, y puedes renovarlo cuando quieras para desconectar a todos.
 
 DETALLES CUIDADOS
 • Diseño minimalista con modo oscuro en el celular.
@@ -106,7 +110,7 @@ Creado por Miguel Mogrovejo.
 | URL de asistencia | `https://github.com/mjmc4498/mando/issues` |
 | Política de privacidad | `https://mjmc4498.github.io/mando/privacy.html` |
 
-> Estas direcciones funcionan después de publicar el repositorio `mando` en GitHub con Pages activado (ver README).
+> Las tres direcciones ya están publicadas. Conservan «mando» para que la versión 1.0.0 siga funcionando.
 
 ---
 
@@ -134,12 +138,19 @@ Registra los scripts de contenido de Presentazo solo mientras hay una sesión in
 Guarda los ajustes del usuario (color y tamaño del puntero, tecla de avance, etc.) y el identificador aleatorio de la sesión para que el celular pueda reconectarse.
 ```
 
-Permiso de host (`<all_urls>`)
+`activeTab`
 ```
-Las presentaciones pueden estar en cualquier sitio (Google Slides, PowerPoint para la web, Canva, Pitch, archivos locales, etc.) y a menudo dentro de iframes de otros dominios. Presentazo necesita acceso a la pestaña que el usuario elige controlar para simular teclas y clics y dibujar el puntero encima. No lee ni transmite el contenido de las páginas; solo envía al celular del usuario el título de la pestaña controlada.
+Presentazo actúa solo en la pestaña donde el usuario pulsa su ícono (o el atajo Alt+Shift+M): allí inyecta los scripts que ejecutan las órdenes del celular (teclas para cambiar de diapositiva, clics, texto y la capa del puntero). No necesita acceso permanente a ningún sitio.
 ```
 
-**¿Usas código remoto?** → **No.** Todo el JavaScript va incluido en el paquete (PeerJS y el generador de QR están en `lib/`). La conexión con el servidor de señalización de PeerJS solo intercambia datos, no código.
+Permiso de host **opcional** (`<all_urls>`, en `optional_host_permissions`; no se pide al instalar)
+```
+Solo se solicita, con un clic del usuario, en dos casos: si activa «Seguir la pestaña activa» (controlar cualquier pestaña que esté viendo) o si su presentación está incrustada desde otro sitio, como PowerPoint para la web dentro de OneDrive; en ese caso se pide solo ese sitio. El usuario puede quitar el acceso en Ajustes. Presentazo no lee ni transmite el contenido de las páginas; solo envía al celular del usuario el título de la pestaña controlada.
+```
+
+> Con `activeTab`, la versión 1.1.0 ya no muestra el aviso de «permisos generales de host», así que la revisión debería ser más rápida.
+
+**¿Usas código remoto?** → **No.** Todo el JavaScript va incluido en el paquete (PeerJS y el generador de QR están en `lib/`). El servidor de señalización de PeerJS y el servicio de Cloudflare que entrega credenciales temporales de retransmisión solo intercambian datos, no código.
 
 **Uso de datos** — marca:
 - ☑ **Contenido del sitio web** — el título de la pestaña controlada se muestra en el celular del propio usuario (viaja cifrado de punto a punto; no llega al desarrollador).

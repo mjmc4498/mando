@@ -194,3 +194,7 @@ main {
 .actions .spacer { flex: 1; }
 .actions .btn.ghost { padding: 0 10px; }
 .actions .btn.confirm { color: var(--accent); }
+
+.embedded-text { font-size: 12.5px; line-height: 1.4; }
+.embedded .btn { align-self: flex-start; background: var(--text); color: var(--bg); }
+.embedded .btn:hover { opacity: .88; background: var(--text); }

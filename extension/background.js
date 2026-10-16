@@ -2,7 +2,7 @@
 // Coordina la sesión: crea el documento offscreen que mantiene la conexión WebRTC
 // con el celular, decide qué pestaña se controla y le reenvía los comandos.
 
-import { DEFAULT_SETTINGS, ID_PREFIX, getSettings } from './config.js';
+import { DEFAULT_SETTINGS, ID_PREFIX, getSettings, saveSettings } from './config.js';
 
 const OFFSCREEN_PATH = 'offscreen.html';
 const SCRIPTS = [
@@ -108,7 +108,16 @@ async function closeOffscreen(reason) {
 
 // ---------------------------------------------------------------- scripts de contenido
 
+// Acceso a todos los sitios: es opcional y solo se pide para «Seguir la pestaña
+// activa». Sin él, Presentazo actúa en la pestaña donde se pulsa su ícono (activeTab).
+const ALL_SITES = { origins: ['<all_urls>'] };
+const hasAllSites = () => chrome.permissions.contains(ALL_SITES).catch(() => false);
+
 async function registerScripts() {
+  if (!(await hasAllSites())) {
+    await unregisterScripts().catch(() => {});
+    return;
+  }
   const ids = SCRIPTS.map((s) => s.id);
   const existing = await chrome.scripting.getRegisteredContentScripts({ ids });
   if (existing.length === ids.length) return;
@@ -130,7 +139,9 @@ async function unregisterScripts() {
 }
 
 const injecting = new Map();
-const blockedTabs = new Set();
+// Pestañas donde no se pueden inyectar los scripts: 'restricted' (páginas de
+// Chrome) o 'access' (hay que volver a pulsar el ícono en esa pestaña).
+const blockedTabs = new Map();
 
 function inject(tabId) {
   if (!injecting.has(tabId)) {
@@ -155,16 +166,33 @@ function inject(tabId) {
   return injecting.get(tabId);
 }
 
+async function blockReason(tabId) {
+  const tab = await chrome.tabs.get(tabId).catch(() => null);
+  // Sin acceso, Chrome no revela la dirección de la pestaña.
+  if (!tab?.url) return 'access';
+  return isScriptable(tab.url) ? 'access' : 'restricted';
+}
+
 async function sendToTab(tabId, cmd, { injectIfMissing = true } = {}) {
-  if (blockedTabs.has(tabId)) return { ok: false, error: 'restricted' };
+  const blocked = blockedTabs.get(tabId);
+  if (blocked === 'restricted') return { ok: false, error: blocked };
+  if (blocked === 'access') {
+    // Si Chrome vuelve a mostrar la dirección, se pulsó el ícono: hay acceso otra vez.
+    const tab = await chrome.tabs.get(tabId).catch(() => null);
+    if (!tab?.url) return { ok: false, error: 'access' };
+    blockedTabs.delete(tabId);
+    broadcastTarget();
+  }
   const message = { mando: cmd };
   try {
     return await chrome.tabs.sendMessage(tabId, message, { frameId: 0 });
   } catch {
     if (!injectIfMissing) return { ok: false, error: 'unreachable' };
     if (!(await inject(tabId))) {
-      blockedTabs.add(tabId);
-      return { ok: false, error: 'restricted' };
+      const reason = await blockReason(tabId);
+      blockedTabs.set(tabId, reason);
+      if (tabId === cachedTarget) broadcastTarget();
+      return { ok: false, error: reason };
     }
     try {
       return await chrome.tabs.sendMessage(tabId, message, { frameId: 0 });
@@ -215,6 +243,23 @@ async function retarget() {
   }
 }
 
+function tabProblem(tab) {
+  if (!tab.url) return 'access';
+  if (blockedTabs.get(tab.id) === 'restricted') return 'restricted';
+  return isScriptable(tab.url) ? null : 'restricted';
+}
+
+// Al pulsar el ícono, Chrome da acceso a esa pestaña (activeTab): se inyectan ya
+// los scripts para que el celular pueda actuar de inmediato.
+function prepareTab(tabId) {
+  blockedTabs.delete(tabId);
+  return inject(tabId).then(async (ok) => {
+    if (!ok) blockedTabs.set(tabId, await blockReason(tabId));
+    broadcastTarget();
+    return ok;
+  });
+}
+
 function isScriptable(url = '') {
   if (!/^(https?|file):/.test(url)) return false;
   return !/^https:\/\/(chromewebstore\.google\.com|chrome\.google\.com\/webstore)/.test(url);
@@ -226,7 +271,8 @@ async function targetInfo() {
   if (!tab) return { t: 'target', title: '', host: '', ok: false };
   let host = '';
   try { host = new URL(tab.url).hostname; } catch {}
-  return { t: 'target', title: tab.title || host, host, ok: isScriptable(tab.url) && !blockedTabs.has(id) };
+  const reason = tabProblem(tab);
+  return { t: 'target', title: tab.title || host, host, ok: !reason, ...(reason && { reason }) };
 }
 
 let broadcastTimer = 0;
@@ -249,7 +295,9 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 });
 chrome.tabs.onUpdated.addListener((tabId, info) => {
   if (info.status === 'loading' || info.url) blockedTabs.delete(tabId);
-  if (tabId === cachedTarget && (info.title || info.url)) broadcastTarget();
+  // Sin acceso a la pestaña Chrome no informa su título ni su dirección: al terminar
+  // de cargar se avisa igual a los celulares (pueden necesitar que se pulse el ícono).
+  if (tabId === cachedTarget && (info.title || info.url || info.status === 'complete')) broadcastTarget();
 });
 
 // ---------------------------------------------------------------- ventana
@@ -304,7 +352,7 @@ async function handleCommand(cmd) {
   }
 
   const res = await sendToTab(tabId, cmd);
-  if (res?.error === 'restricted') {
+  if (res?.error === 'restricted' || res?.error === 'access') {
     if (Date.now() - lastRestrictedNotice < 2000) return null;
     lastRestrictedNotice = Date.now();
     return { reply: await targetInfo() };
@@ -355,6 +403,7 @@ async function startSession(tabId) {
   if (tabId != null) {
     const current = s.targetTabId != null ? await chrome.tabs.get(s.targetTabId).catch(() => null) : null;
     if (!current || !s.active) await setTarget(tabId);
+    if ((await targetTabId()) === tabId) await prepareTab(tabId);
   }
   await ensureOffscreen();
   return snapshot();
@@ -385,7 +434,10 @@ async function snapshot() {
   let target = null;
   if (s.targetTabId != null) {
     const tab = await chrome.tabs.get(s.targetTabId).catch(() => null);
-    if (tab) target = { id: tab.id, title: tab.title, url: tab.url, favIconUrl: tab.favIconUrl, ok: isScriptable(tab.url) };
+    if (tab) {
+      const reason = tabProblem(tab);
+      target = { id: tab.id, title: tab.title, url: tab.url, favIconUrl: tab.favIconUrl, ok: !reason, reason };
+    }
   }
   return { state: s, identity, target };
 }
@@ -398,7 +450,29 @@ const handlers = {
   'session:stop': () => stopSession(),
   'session:reset': () => resetCode(),
   'session:get': () => snapshot(),
-  'target:set': async (msg) => { await setTarget(msg.tabId); return snapshot(); },
+  'target:set': async (msg) => { await setTarget(msg.tabId); await prepareTab(msg.tabId); return snapshot(); },
+  // Presentaciones incrustadas desde otro sitio (p. ej. PowerPoint para la web):
+  // el popup pide permiso para esos sitios y luego se vuelve a inyectar.
+  'frames:missing': async () => {
+    const tabId = await targetTabId();
+    if (tabId == null) return { patterns: [] };
+    const res = await sendToTab(tabId, { t: 'frames' }, { injectIfMissing: false });
+    const patterns = [];
+    for (const origin of Array.isArray(res?.frames) ? res.frames : []) {
+      let pattern;
+      try {
+        const u = new URL(origin);
+        pattern = `${u.protocol}//${u.hostname}/*`;
+      } catch { continue; }
+      if (!patterns.includes(pattern) && !(await chrome.permissions.contains({ origins: [pattern] }).catch(() => false))) patterns.push(pattern);
+    }
+    return { patterns };
+  },
+  'frames:inject': async () => {
+    const tabId = await targetTabId();
+    if (tabId != null) await prepareTab(tabId);
+    return { ok: true };
+  },
   'device:kick': (msg) => chrome.runtime.sendMessage({ to: 'offscreen', type: 'kick', id: msg.id }).catch(() => {}),
 
   // documento offscreen
@@ -436,6 +510,18 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     .then(() => handler(msg, sender))
     .then((res) => sendResponse(res ?? null), (err) => sendResponse({ ok: false, error: String(err?.message || err) }));
   return true;
+});
+
+// ---------------------------------------------------------------- permisos opcionales
+
+chrome.permissions.onAdded.addListener(async () => {
+  if ((await loadState()).active) registerScripts();
+});
+
+chrome.permissions.onRemoved.addListener(async () => {
+  if (await hasAllSites()) return;
+  if (settings.followActiveTab) await saveSettings({ followActiveTab: false });
+  unregisterScripts().catch(() => {});
 });
 
 // ---------------------------------------------------------------- ciclo de vida

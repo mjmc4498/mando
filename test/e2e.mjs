@@ -1,16 +1,35 @@
 // Prueba de punta a punta de Presentazo: extensión + página del celular conectadas por PeerJS.
 // Requiere un servidor local en la raíz del proyecto:  npm run serve   (otra terminal)
 // y luego:  npm run test:e2e
+//
+// Modos (variable MODE):
+//   activetab         (predeterminado) instalación normal: acceso solo a la pestaña donde se pulsa el ícono.
+//   todos-los-sitios  simula que el usuario concedió el acceso opcional a todos los sitios.
 import puppeteer from 'puppeteer';
 
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EXT = path.join(ROOT, 'extension');
 const BASE = process.env.BASE || 'http://localhost:8765';
 const OUT = process.env.OUT || path.join(ROOT, 'test', 'out');
-await import('node:fs').then((fs) => fs.mkdirSync(OUT, { recursive: true }));
+fs.mkdirSync(OUT, { recursive: true });
+
+const MODE = process.env.MODE === 'todos-los-sitios' ? 'todos-los-sitios' : 'activetab';
+const ALL_SITES = MODE === 'todos-los-sitios';
+let EXT = path.join(ROOT, 'extension');
+if (ALL_SITES) {
+  // Copia de la extensión con el acceso opcional ya concedido.
+  const dir = path.join(OUT, 'ext-todos-los-sitios');
+  fs.rmSync(dir, { recursive: true, force: true });
+  fs.cpSync(EXT, dir, { recursive: true });
+  const manifest = JSON.parse(fs.readFileSync(path.join(dir, 'manifest.json'), 'utf8'));
+  manifest.host_permissions = ['<all_urls>'];
+  fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  EXT = dir;
+}
+console.log(`Modo: ${MODE}`);
 
 const results = [];
 const check = (name, ok, detail = '') => {
@@ -56,13 +75,30 @@ try {
   const ctl = welcome || (await browser.newPage());
   if (!welcome) await ctl.goto(`chrome-extension://${extId}/options.html`);
   const sw = (msg) => ctl.evaluate((m) => chrome.runtime.sendMessage({ to: 'sw', ...m }), msg);
-  const deckTabId = await ctl.evaluate(async (base) => (await chrome.tabs.query({ url: `${base}/test/*` }))[0]?.id, BASE);
-  check('Pestaña de la presentación encontrada', deckTabId != null, `tabId ${deckTabId}`);
 
+  // Pulsar el ícono de la extensión en una pestaña (da acceso a ella con activeTab).
+  async function clickIcon(page) {
+    // Como en Chrome, si el panel sigue abierto un nuevo clic lo cerraría: se cierra antes.
+    for (const p of await browser.pages()) if (p.url().includes('/popup.html')) await p.close().catch(() => {});
+    await page.bringToFront();
+    const cdp = await browser.target().createCDPSession();
+    const { targetInfos } = await cdp.send('Target.getTargets', { filter: [{ type: 'tab' }] });
+    const tab = targetInfos.find((t) => t.url === page.url());
+    await cdp.send('Extensions.triggerAction', { id: extId, targetId: tab.targetId });
+    await cdp.detach();
+    await browser.waitForTarget((t) => t.url().includes('/popup.html'), { timeout: 8000 }).catch(() => null);
+  }
+
+  await clickIcon(deck);
+  await waitFor(async () => {
+    const { state } = await ctl.evaluate(() => chrome.storage.session.get('state'));
+    return state?.active && state.targetTabId != null;
+  }, { timeout: 10000 });
   await deck.bringToFront();
-  const snap = await sw({ type: 'session:start', tabId: deckTabId });
-  check('Sesión iniciada', snap?.state?.active === true, `peerId ${snap?.identity?.peerId}`);
-  check('Pestaña objetivo correcta', snap?.state?.targetTabId === deckTabId);
+  const snap = await sw({ type: 'session:get' });
+  const deckTabId = snap?.state?.targetTabId;
+  check('Pulsar el ícono inicia la sesión', snap?.state?.active === true, `peerId ${snap?.identity?.peerId}`);
+  check('La pestaña donde se pulsó es la controlada', snap?.target?.url?.includes('/test/index.html'), snap?.target?.url);
 
   const ready = await waitFor(async () => {
     const { state } = await ctl.evaluate(() => chrome.storage.session.get('state'));
@@ -71,7 +107,8 @@ try {
   check('Conectado al servidor de señalización (PeerJS)', !!ready);
 
   const scripts = await ctl.evaluate(() => chrome.scripting.getRegisteredContentScripts());
-  check('Scripts de contenido registrados durante la sesión', scripts.length === 2, scripts.map((s) => `${s.id}:${s.world}`).join(', '));
+  if (ALL_SITES) check('Scripts de contenido registrados durante la sesión', scripts.length === 2, scripts.map((s) => `${s.id}:${s.world}`).join(', '));
+  else check('Sin acceso amplio no se registran scripts en otros sitios', scripts.length === 0);
 
   // ---------- celular
   const { identity } = await ctl.evaluate(() => chrome.storage.local.get('identity'));
@@ -226,6 +263,12 @@ try {
   check('Teclas llegan al iframe enfocado (mismo origen)', !!ok);
 
   // ---------- iframe de otro origen
+  if (!ALL_SITES) {
+    // Del tamaño de una presentación real (los marcos pequeños, como anuncios, se ignoran).
+    await deck.evaluate(() => Object.assign(document.getElementById('cross').style, { width: '640px', height: '360px' }));
+    const missing = await sw({ type: 'frames:missing' });
+    check('Detecta la presentación incrustada y ofrece permitir su sitio', missing?.patterns?.includes('http://127.0.0.1/*'), JSON.stringify(missing?.patterns));
+  } else {
   const crossBox = await deck.evaluate(() => {
     const f = document.querySelector('#cross').getBoundingClientRect();
     return { x: f.left, y: f.top, W: innerWidth };
@@ -255,6 +298,7 @@ try {
   await cmd({ t: 'key', k: 'ArrowRight' });
   ok = await waitFor(async () => (await deckEvents()).some((e) => e.includes('[cross] keydown key=ArrowRight keyCode=39')), { timeout: 4000 });
   check('Teclas llegan al iframe enfocado (otro origen)', !!ok);
+  }
 
   // ---------- desplazamiento
   const sc = await deck.evaluate(() => {
@@ -283,6 +327,41 @@ try {
   await popup.setViewport({ width: 340, height, deviceScaleFactor: 2 });
   await popup.screenshot({ path: `${OUT}/e2e-popup.png` });
   await popup.close();
+
+  // ---------- recargar la presentación
+  await deck.reload({ waitUntil: 'networkidle0' });
+  await deck.bringToFront();
+  const before = await slideText();
+  const res = await sw({ type: 'cmd', cmd: { t: 'nav', a: 'next' } });
+  await sleep(600);
+  const advanced = (await slideText()) !== before;
+  check('Tras recargar: sigue funcionando o pide pulsar el ícono', advanced || res?.reply?.reason === 'access', advanced ? 'sigue funcionando' : `aviso: ${res?.reply?.reason}`);
+  if (!advanced) {
+    await clickIcon(deck);
+    await sleep(1500);
+    await sw({ type: 'cmd', cmd: { t: 'nav', a: 'next' } });
+    ok = await waitFor(async () => (await slideText()) !== before, { timeout: 4000 });
+    check('Al volver a pulsar el ícono, recupera el control', !!ok);
+  }
+
+  // ---------- la pestaña cambia a otro sitio: Chrome retira el acceso de activeTab
+  if (!ALL_SITES) {
+    await deck.goto(`${BASE.replace('localhost', '127.0.0.1')}/test/index.html`, { waitUntil: 'networkidle0' });
+    await deck.bringToFront();
+    const r = await sw({ type: 'cmd', cmd: { t: 'nav', a: 'next' } });
+    check('Otro sitio sin pulsar el ícono: avisa que falta acceso', r?.reply?.reason === 'access', JSON.stringify(r?.reply));
+    const shown = await waitFor(() => phone.evaluate(() => document.getElementById('target-title').textContent.includes('pulsa el ícono')), { timeout: 5000 });
+    check('El celular indica cómo recuperar el control', !!shown);
+    await clickIcon(deck);
+    await sleep(1500);
+    if (process.env.DEBUG) {
+      console.log('DEBUG popups:', (await browser.pages()).map((p) => p.url()).filter((u) => u.includes('popup')));
+      console.log('DEBUG estado:', JSON.stringify((await sw({ type: 'session:get' }))?.target));
+    }
+    const r2 = await sw({ type: 'cmd', cmd: { t: 'nav', a: 'next' } });
+    ok = await waitFor(async () => (await slideText()) === 'Diapositiva 2', { timeout: 4000 });
+    check('Tras pulsar el ícono en el nuevo sitio, vuelve a funcionar', !!ok, ok ? '' : `respuesta: ${JSON.stringify(r2)} · diapositiva: ${await slideText()}`);
+  }
 
   // ---------- detener sesión
   await deck.bringToFront();

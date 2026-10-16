@@ -7,6 +7,10 @@ debe ser mayor que el anterior para que la Chrome Web Store lo acepte.
 
 - **Nuevo nombre: Presentazo** (antes «Mando»). Las direcciones web y el
   funcionamiento no cambian.
+- **Más privada:** ya no pide acceso a todos los sitios al instalarse. Actúa
+  solo en la pestaña donde pulsas su ícono (`activeTab`). El acceso amplio es
+  opcional y se pide con un clic solo para «Seguir la pestaña activa» o para
+  presentaciones incrustadas desde otro sitio (p. ej. PowerPoint para la web).
 - **Funciona en redes restrictivas.** Si una red (de empresa, de un hotel o un
   Wi-Fi público) bloquea la conexión directa, Presentazo usa el servidor de
   retransmisión de Cloudflare. El tráfico sigue cifrado de extremo a extremo.

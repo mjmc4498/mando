@@ -47,7 +47,8 @@ Probado de principio a fin (38 comprobaciones automáticas) y verificado con **G
 ```
 
 - El QR contiene `https://…/mando/#id=<sesión>&k=<clave>`. La clave viaja en el fragmento `#` (nunca llega a un servidor) y el celular la borra de la barra de direcciones al conectarse.
-- Los scripts de contenido **solo se registran mientras hay una sesión iniciada** y se retiran al detenerla.
+- **Permisos mínimos:** Presentazo usa `activeTab`, así que solo actúa en la pestaña donde se pulsa su ícono. El acceso a todos los sitios es **opcional** (`optional_host_permissions`) y se pide con un clic solo para «Seguir la pestaña activa» o para presentaciones incrustadas desde otro sitio; se puede quitar en Ajustes.
+- Los scripts de contenido **solo actúan mientras hay una sesión iniciada** y se retiran al detenerla.
 - La capa visual se dibuja en la capa superior del navegador (elemento `popover`), por eso el láser se ve encima de presentaciones en pantalla completa.
 - Si la presentación está dentro de un iframe de otro dominio (p. ej. PowerPoint para la web), las órdenes se enrutan a ese iframe con una sonda de un solo uso a través del service worker.
 
@@ -131,7 +132,8 @@ Para un `.crx` instalable fuera de la tienda: `./scripts/build.sh --crx` (la cla
 ```bash
 npm install                 # instala Puppeteer (solo para pruebas y capturas)
 npm run serve               # servidor local en http://localhost:8765 (otra terminal)
-npm run test:e2e            # prueba completa extensión ↔ celular (38 comprobaciones)
+npm run test:e2e            # prueba completa con activeTab (instalación normal)
+npm run test:e2e:todos      # la misma prueba con el acceso opcional a todos los sitios concedido
 npm run icons               # regenera íconos desde design/*.svg
 npm run store:capture       # capturas reales de la extensión
 npm run store:images        # compone las imágenes de la tienda

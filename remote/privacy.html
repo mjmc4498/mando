@@ -56,7 +56,7 @@
     </ul>
 
     <h2>Acceso a las páginas web</h2>
-    <p>La extensión pide acceso a los sitios web para poder ejecutar tus órdenes en la pestaña que controlas (simular teclas y clics, y dibujar el puntero encima de la presentación). Sus scripts solo se activan mientras hay una sesión iniciada. Presentazo no lee, guarda ni envía el contenido de las páginas. Lo único que se envía a tu celular es el título de la pestaña controlada, para que sepas qué estás controlando.</p>
+    <p>Presentazo solo actúa en la pestaña donde pulsas su ícono: ahí ejecuta tus órdenes (simular teclas y clics, y dibujar el puntero encima de la presentación). Únicamente si tú lo autorizas, puede actuar en otros sitios: al activar «Seguir la pestaña activa» o cuando tu presentación está incrustada desde otro sitio. Puedes quitar ese acceso en Ajustes. Presentazo no lee, guarda ni envía el contenido de las páginas. Lo único que se envía a tu celular es el título de la pestaña controlada, para que sepas qué estás controlando.</p>
 
     <h2>Texto que escribes</h2>
     <p>Lo que escribes en el teclado del control se envía directamente a tu computadora para insertarlo en la página y no se guarda en ningún lugar.</p>
@@ -69,7 +69,8 @@
 
     <h2>Permisos de la extensión</h2>
     <ul>
-      <li><strong>Acceso a los sitios web:</strong> ejecutar las órdenes del celular en la pestaña de la presentación.</li>
+      <li><strong>Pestaña activa (<code>activeTab</code>):</strong> ejecutar las órdenes del celular en la pestaña donde pulsas el ícono de Presentazo.</li>
+      <li><strong>Acceso a otros sitios (opcional):</strong> solo si lo autorizas, para «Seguir la pestaña activa» o controlar una presentación incrustada desde otro sitio.</li>
       <li><strong>Ejecución de scripts (<code>scripting</code>):</strong> activar los scripts de Presentazo solo mientras hay una sesión iniciada.</li>
       <li><strong>Documento en segundo plano (<code>offscreen</code>):</strong> mantener la conexión WebRTC con el celular en segundo plano.</li>
       <li><strong>Almacenamiento (<code>storage</code>):</strong> guardar tus ajustes y el identificador de sesión.</li>

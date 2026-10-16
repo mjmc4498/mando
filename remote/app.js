@@ -49,6 +49,7 @@
     gateUnsupportedTitle: 'Navegador no compatible', gateUnsupportedBody: 'Abre este enlace en Chrome o Safari actualizados.',
     noTarget: 'No hay ninguna pestaña para controlar',
     restricted: 'Chrome no permite controlar esta pestaña',
+    needsAccess: 'En la computadora, pulsa el ícono de Presentazo en esa pestaña',
     notConnected: 'Sin conexión con la computadora',
     timerReset: 'Cronómetro reiniciado',
     airUnsupported: 'Tu celular no permite usar el giroscopio aquí',
@@ -183,15 +184,19 @@
     $('#gate-retry').hidden = !retry;
   }
 
+  // Motivo por el que no se puede controlar la pestaña: página de Chrome o falta
+  // de acceso (hay que volver a pulsar el ícono de Presentazo en la computadora).
+  const problem = (info) => (info.reason === 'access' ? t('needsAccess') : t('restricted'));
+
   function setTarget(info) {
     const el = $('#target');
+    const blocked = !!info && info.ok === false;
+    el.classList.toggle('warn', blocked);
     if (!info || !info.title) {
-      el.classList.remove('warn');
-      $('#target-title').textContent = info && info.ok === false ? t('restricted') : '';
+      $('#target-title').textContent = blocked ? problem(info) : '';
       return;
     }
-    el.classList.toggle('warn', info.ok === false);
-    $('#target-title').textContent = info.ok === false ? `${t('restricted')} · ${info.title}` : info.title;
+    $('#target-title').textContent = blocked ? `${problem(info)} · ${info.title}` : info.title;
   }
 
   // ================================================================ conexión (PeerJS)
@@ -327,7 +332,7 @@
         break;
       case 'target':
         setTarget(msg);
-        if (msg.ok === false && app.classList.contains('ready')) toast(t('restricted'));
+        if (msg.ok === false && app.classList.contains('ready')) toast(problem(msg));
         break;
       case 'state':
         if ('black' in msg) $('#chip-black').classList.toggle('on', !!msg.black);
