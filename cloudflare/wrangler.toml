@@ -12,8 +12,9 @@ compatibility_date = "2026-10-01"
 workers_dev = true
 
 [vars]
-# Orígenes web que pueden pedir credenciales (además de cualquier extensión de Chrome).
-ALLOWED_ORIGINS = "https://mjmc4498.github.io,http://localhost:8765"
+# Orígenes que pueden pedir credenciales (además de cualquier extensión de Chrome).
+# app://presentazo es la app de escritorio.
+ALLOWED_ORIGINS = "https://mjmc4498.github.io,http://localhost:8765,app://presentazo"
 # Duración de las credenciales en segundos (4 h).
 CREDENTIAL_TTL = "14400"
 # Consumo mensual (GB enviados por TURN) al que se pausa la retransmisión.

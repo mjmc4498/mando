@@ -1,0 +1,71 @@
+# Prueba la app de escritorio en máquinas reales de Windows y de Mac con chip M:
+# teclado y mouse nativos, la app completa con un celular simulado, y la app ya
+# empaquetada por el mismo script que crea los instaladores.
+name: Probar app de escritorio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'escritorio/**'
+      - 'remote/**'
+      - 'test/escritorio*.mjs'
+      - '.github/workflows/escritorio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probar:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            sistema: windows
+            app: escritorio/salida/win-unpacked/Presentazo.exe
+          - os: macos-latest
+            sistema: mac-chip-m
+            app: /Users/runner/Library/Caches/presentazo-escritorio/mac-arm64/Presentazo.app/Contents/MacOS/Presentazo
+    name: ${{ matrix.sistema }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Instalar dependencias
+        run: |
+          npm ci
+          cd escritorio
+          npm ci
+
+      - name: Teclado y mouse nativos
+        run: node test/escritorio-nativo.mjs
+
+      - name: App completa (código fuente)
+        run: node test/escritorio.mjs
+
+      - name: Crear instaladores
+        working-directory: escritorio
+        run: npm run instaladores -- ${{ matrix.sistema }}
+
+      - name: App completa (empaquetada)
+        run: node test/escritorio.mjs
+        env:
+          PRESENTAZO_APP: ${{ github.workspace }}/${{ matrix.app }}
+        if: matrix.sistema == 'windows'
+
+      - name: App completa (empaquetada)
+        run: node test/escritorio.mjs
+        env:
+          PRESENTAZO_APP: ${{ matrix.app }}
+        if: matrix.sistema != 'windows'
+
+      - name: Guardar capturas y registros
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resultados-${{ matrix.sistema }}
+          path: test/out/escritorio
+          if-no-files-found: ignore

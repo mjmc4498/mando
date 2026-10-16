@@ -39,17 +39,18 @@
     retry: 'Reintentar', sensitivity: 'Sensibilidad del puntero', haptics: 'Vibración', keepAwake: 'Mantener la pantalla encendida',
     latency: 'Latencia', forget: 'Olvidar esta computadora', done: 'Listo', madeBy: 'Creado por Miguel Mogrovejo', privacy: 'Privacidad',
     connected: 'Conectado', connecting: 'Conectando…', reconnecting: 'Reconectando…', offline: 'Sin conexión', waiting: 'Esperando…',
-    gateIdleTitle: 'Escanea el código', gateIdleBody: 'Abre la extensión Presentazo en Chrome y escanea el código QR con la cámara de tu celular.',
+    gateIdleTitle: 'Escanea el código', gateIdleBody: 'Abre Presentazo en tu computadora (la extensión de Chrome o la app de escritorio) y escanea el código QR con la cámara de tu celular.',
     gateConnectingTitle: 'Conectando…', gateConnectingBody: 'Buscando tu computadora.',
-    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre el panel de Presentazo en Chrome. Si muestra un código nuevo, escanéalo otra vez.',
+    gateWaitingTitle: 'Esperando a la computadora', gateWaitingBody: 'Abre Presentazo en tu computadora. Si muestra un código nuevo, escanéalo otra vez.',
     gateOfflineTitle: 'Sin conexión', gateOfflineBody: 'Revisa la conexión a internet de tu celular.',
-    gateDeniedTitle: 'Código no válido', gateDeniedBody: 'Este código fue renovado. Escanea el código nuevo desde la extensión.',
+    gateDeniedTitle: 'Código no válido', gateDeniedBody: 'Este código fue renovado. Escanea el código nuevo en tu computadora.',
     gateEndedTitle: 'Sesión finalizada', gateEndedBody: 'La sesión se detuvo en la computadora. Si al volver a iniciarla aparece un código nuevo, escanéalo.',
     gateKickedTitle: 'Desconectado', gateKickedBody: 'La computadora cerró la conexión con este celular.',
     gateUnsupportedTitle: 'Navegador no compatible', gateUnsupportedBody: 'Abre este enlace en Chrome o Safari actualizados.',
     noTarget: 'No hay ninguna pestaña para controlar',
     restricted: 'Chrome no permite controlar esta pestaña',
     needsAccess: 'En la computadora, pulsa el ícono de Presentazo en esa pestaña',
+    needsPermission: 'En la computadora, da a Presentazo el permiso de Accesibilidad',
     notConnected: 'Sin conexión con la computadora',
     timerReset: 'Cronómetro reiniciado',
     airUnsupported: 'Tu celular no permite usar el giroscopio aquí',
@@ -184,9 +185,11 @@
     $('#gate-retry').hidden = !retry;
   }
 
-  // Motivo por el que no se puede controlar la pestaña: página de Chrome o falta
-  // de acceso (hay que volver a pulsar el ícono de Presentazo en la computadora).
-  const problem = (info) => (info.reason === 'access' ? t('needsAccess') : t('restricted'));
+  // Motivo por el que no se puede controlar la computadora: página de Chrome, falta
+  // de acceso (hay que volver a pulsar el ícono de Presentazo) o, en la app de
+  // escritorio para Mac, falta el permiso de Accesibilidad.
+  const PROBLEMS = { access: 'needsAccess', permission: 'needsPermission' };
+  const problem = (info) => t(PROBLEMS[info.reason] || 'restricted');
 
   function setTarget(info) {
     const el = $('#target');

@@ -1,0 +1,123 @@
+{
+  "name": "presentazo-escritorio",
+  "productName": "Presentazo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Presentazo para escritorio: controla PowerPoint, Keynote y cualquier presentación desde el celular.",
+  "author": "Miguel Mogrovejo",
+  "homepage": "https://mjmc4498.github.io/mando/",
+  "license": "UNLICENSED",
+  "main": "src/main.js",
+  "dependencies": {
+    "koffi": "^3.3.3"
+  },
+  "devDependencies": {
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "iconos": "python3 scripts/iconos.py",
+    "instaladores": "node scripts/instaladores.mjs"
+  },
+  "build": {
+    "appId": "io.github.mjmc4498.presentazo",
+    "productName": "Presentazo",
+    "copyright": "© 2026 Miguel Mogrovejo",
+    "directories": {
+      "output": "salida",
+      "buildResources": "recursos"
+    },
+    "files": [
+      "src/**",
+      "ui/**",
+      "recursos/bandeja/**",
+      "package.json",
+      "!node_modules/@koromix/**",
+      "!node_modules/koffi/{doc,lib,vendor}/**",
+      "!node_modules/koffi/{cnoke.cjs,CHANGELOG.md,README.md,index.d.ts}",
+      "!node_modules/koffi/src/koffi/CMakeLists.txt",
+      "!node_modules/koffi/src/koffi/src/abi/**",
+      "!node_modules/koffi/src/koffi/src/*.{cc,hh,inc,def}"
+    ],
+    "extraResources": [
+      {
+        "from": "AVISOS_DE_TERCEROS.txt",
+        "to": "AVISOS_DE_TERCEROS.txt"
+      }
+    ],
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "afterPack": "scripts/firmar-mac.cjs",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "recursos/icon.icns",
+      "identity": null,
+      "hardenedRuntime": false,
+      "darkModeSupport": true,
+      "minimumSystemVersion": "12.0",
+      "extendInfo": {
+        "LSMultipleInstancesProhibited": true
+      },
+      "artifactName": "Presentazo-${version}-mac-${arch}.${ext}",
+      "extraResources": [
+        {
+          "from": "vendor/koffi/darwin_${arch}",
+          "to": "koffi/darwin_${arch}"
+        }
+      ]
+    },
+    "dmg": {
+      "title": "Presentazo ${version}",
+      "contents": [
+        {
+          "x": 150,
+          "y": 190
+        },
+        {
+          "x": 390,
+          "y": 190,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "format": "ULFO"
+    },
+    "win": {
+      "icon": "recursos/icon.ico",
+      "legalTrademarks": "Presentazo",
+      "extraResources": [
+        {
+          "from": "vendor/koffi/win32_${arch}",
+          "to": "koffi/win32_${arch}"
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Presentazo",
+      "uninstallDisplayName": "Presentazo",
+      "installerLanguages": [
+        "es_ES"
+      ],
+      "language": "3082",
+      "multiLanguageInstaller": false,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "Presentazo-${version}-windows-instalador.${ext}"
+    },
+    "portable": {
+      "requestExecutionLevel": "user",
+      "artifactName": "Presentazo-${version}-windows-portable.${ext}"
+    },
+    "compression": "maximum"
+  }
+}

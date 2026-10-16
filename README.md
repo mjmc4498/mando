@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Presentazo</h1>
-<p align="center">Controla tus presentaciones de Chrome desde el celular.<br>
+<p align="center">Controla tus presentaciones desde el celular: en Chrome con la extensión y en Windows o Mac con la app de escritorio.<br>
 Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto y teclado.</p>
 <p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · antes llamado «Mando»</sub></p>
 <p align="center"><a href="https://www.facebook.com/presentazo/">Facebook</a> · <a href="https://www.instagram.com/presentazo/">Instagram</a> · <a href="https://www.tiktok.com/@presentazo">TikTok</a> · <a href="https://www.youtube.com/@presentazo">YouTube</a> · <a href="https://x.com/presentazo">X</a></p>
@@ -32,6 +32,17 @@ Me gusta porque suena a lo que todos queremos cuando exponemos: que nos salga un
 | **Detalles** | Pantalla del celular siempre encendida, vibración, todo en español, modo claro/oscuro en la extensión, atajo `Alt+Shift+M`. |
 
 Probado de principio a fin (38 comprobaciones automáticas) y verificado con **Google Slides** (iniciar, avanzar, retroceder y salir del modo presentación) y **reveal.js**.
+
+## App de escritorio (Windows y Mac)
+
+Además de la extensión, Presentazo tiene una app para Windows y Mac. Sirve para controlar programas que no están en Chrome, como PowerPoint, Keynote, Adobe Acrobat o Vista Previa, y también presentaciones abiertas en cualquier navegador. En el celular se usa el mismo control remoto.
+
+- Puedes elegir qué controlar: una pantalla, un programa (por ejemplo, la ventana de PowerPoint) o una pestaña del navegador. Presentazo los trae al frente antes de cada orden. En automático, controla lo que esté al frente.
+- El puntero láser, el foco, el lápiz y la pantalla negra se dibujan en una capa transparente encima de todo. Si hay un proyector o monitor externo, aparecen ahí.
+- El botón para iniciar la presentación reconoce PowerPoint, Keynote, LibreOffice Impress, Acrobat, Vista Previa y Presentaciones de Google.
+- En Mac pide el permiso de Accesibilidad, que macOS exige para enviar teclas y mover el mouse. En Windows no pide permisos.
+
+Los instaladores están en [`instaladores/`](instaladores/LEEME.md), separados por sistema (Windows, Mac Intel y Mac con chip M) y por tipo (instalador o portable). El código está en `escritorio/`.
 
 ## Cómo funciona
 
@@ -77,6 +88,10 @@ mando/
 │   └── icons/
 ├── remote/              ← control del celular (se publica en GitHub Pages)
 │   └── privacy.html     política de privacidad (URL pública para la tienda)
+├── escritorio/          ← app de escritorio para Windows y Mac (Electron)
+│   ├── src/             proceso principal, teclado y mouse de cada sistema
+│   └── ui/              panel con el QR, capa del puntero y conexión
+├── instaladores/        instaladores generados (LEEME.md explica cuál usar)
 ├── cloudflare/          ← Worker que entrega credenciales de retransmisión (TURN)
 ├── store/               ← imágenes y textos para la ficha de la tienda (LISTING.md)
 ├── design/              logos SVG y composiciones de las imágenes de la tienda
@@ -143,6 +158,7 @@ npm install                 # instala Puppeteer (solo para pruebas y capturas)
 npm run serve               # servidor local en http://localhost:8765 (otra terminal)
 npm run test:e2e            # prueba completa con activeTab (instalación normal)
 npm run test:e2e:todos      # la misma prueba con el acceso opcional a todos los sitios concedido
+npm run test:escritorio     # prueba de punta a punta de la app de escritorio
 npm run icons               # regenera íconos desde design/*.svg
 npm run store:capture       # capturas reales de la extensión
 npm run store:images        # compone las imágenes de la tienda
@@ -150,6 +166,17 @@ npm run store:images        # compone las imágenes de la tienda
 
 - Vista previa del control sin computadora: `http://localhost:8765/remote/?demo` (añade `&view=pointer`, `mouse` o `keys`).
 - Prueba local con el celular: en **Ajustes › Avanzado** pon `http://<IP-de-tu-computadora>:8765/remote/` (misma red Wi-Fi).
+
+### App de escritorio
+
+```bash
+cd escritorio
+npm install
+npm start                   # abre la app en modo desarrollo
+npm run instaladores        # crea los instaladores de Windows, Mac Intel y Mac con chip M
+```
+
+Los instaladores se generan desde una Mac y quedan en `instaladores/`. Como no tienen firma de Apple ni de Microsoft, la primera vez el sistema muestra un aviso; `instaladores/LEEME.md` explica cómo abrirlos.
 
 ### Retransmisión con Cloudflare (redes restrictivas)
 
@@ -185,7 +212,7 @@ Presentazo usa el servidor público gratuito de PeerJS. Para no depender de él,
 
 - Chrome no permite extensiones en `chrome://`, en la Chrome Web Store ni en su visor de PDF integrado.
 - Los eventos son sintéticos: funcionan con las apps web de presentaciones, pero no pueden abrir menús nativos del sistema ni selectores de archivos.
-- PowerPoint o Keynote de escritorio no están en Chrome, así que no se pueden controlar.
+- La extensión no controla PowerPoint o Keynote de escritorio porque no están en Chrome. Para eso está la app de escritorio.
 
 ## Redes sociales
 

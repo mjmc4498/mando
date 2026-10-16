@@ -7,3 +7,10 @@ dist/*/
 .wrangler/
 cloudflare/.wrangler/
 cloudflare/.dev.vars
+escritorio/node_modules/
+escritorio/vendor/
+escritorio/salida/
+# Los instaladores pesan más de 100 MB (límite de GitHub): se publican como Release.
+instaladores/**/*.dmg
+instaladores/**/*.zip
+instaladores/**/*.exe

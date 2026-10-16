@@ -35,14 +35,14 @@
     </div>
   </header>
   <section>
-    <p class="muted" style="margin-top:20px">Última actualización: 15 de octubre de 2026 (versión 1.1) · Autor: Miguel Mogrovejo</p>
+    <p class="muted" style="margin-top:20px">Última actualización: 16 de octubre de 2026 (extensión 1.1 y app de escritorio 1.0) · Autor: Miguel Mogrovejo</p>
 
     <div class="card">
       <strong>En resumen:</strong> Presentazo no recopila, vende ni comparte datos personales. No usa cuentas, analítica, publicidad ni cookies. Tu celular y tu computadora se comunican de forma directa y cifrada.
     </div>
 
     <h2>Qué hace Presentazo</h2>
-    <p>Presentazo es una extensión de Chrome que te permite controlar una presentación desde tu celular: avanzar o retroceder diapositivas, mostrar un puntero láser, dibujar, mover un mouse remoto y escribir texto. Al escanear el código QR, tu celular abre esta página web y se conecta con la extensión.</p>
+    <p>Presentazo te permite controlar una presentación desde tu celular: avanzar o retroceder diapositivas, mostrar un puntero láser, dibujar, mover un mouse remoto y escribir texto. Existe como extensión de Chrome y como app de escritorio para Windows y Mac. Al escanear el código QR, tu celular abre esta página web y se conecta con tu computadora.</p>
 
     <h2>Datos que no recopilamos</h2>
     <p>Presentazo no tiene servidores propios ni base de datos. No recopilamos tu nombre, correo, historial de navegación, contenido de las páginas, ubicación ni ningún otro dato personal.</p>
@@ -51,19 +51,23 @@
     <ul>
       <li>Las órdenes viajan por <strong>WebRTC</strong>, de punto a punto entre tu celular y tu computadora, cifradas de extremo a extremo (DTLS).</li>
       <li>Para establecer esa conexión se usa el servidor público de señalización de <a href="https://peerjs.com" rel="noopener">PeerJS</a>. Este servidor solo recibe un identificador de sesión aleatorio y los datos técnicos de red necesarios para conectar los dispositivos (por ejemplo, direcciones IP). No recibe el contenido de tus órdenes.</li>
-      <li>Si tu red impide la conexión directa, el tráfico cifrado pasa por el servidor de retransmisión (TURN) de <a href="https://www.cloudflare.com/es-es/privacypolicy/" rel="noopener">Cloudflare</a>, que no puede leerlo. Para usarlo, la extensión y el celular piden a un pequeño servicio de Presentazo alojado en Cloudflare unas credenciales temporales; ese servicio no guarda ningún dato.</li>
+      <li>Si tu red impide la conexión directa, el tráfico cifrado pasa por el servidor de retransmisión (TURN) de <a href="https://www.cloudflare.com/es-es/privacypolicy/" rel="noopener">Cloudflare</a>, que no puede leerlo. Para usarlo, la computadora y el celular piden a un pequeño servicio de Presentazo alojado en Cloudflare unas credenciales temporales; ese servicio no guarda ningún dato.</li>
       <li>El código QR contiene una clave secreta que solo conocen tu computadora y los dispositivos que lo escanean. De forma predeterminada se genera un código nuevo en cada sesión, y puedes renovarlo en cualquier momento para desconectar a todos.</li>
     </ul>
 
     <h2>Acceso a las páginas web</h2>
     <p>Presentazo solo actúa en la pestaña donde pulsas su ícono: ahí ejecuta tus órdenes (simular teclas y clics, y dibujar el puntero encima de la presentación). Únicamente si tú lo autorizas, puede actuar en otros sitios: al activar «Seguir la pestaña activa» o cuando tu presentación está incrustada desde otro sitio. Puedes quitar ese acceso en Ajustes. Presentazo no lee, guarda ni envía el contenido de las páginas. Lo único que se envía a tu celular es el título de la pestaña controlada, para que sepas qué estás controlando.</p>
 
+    <h2>App de escritorio</h2>
+    <p>La app de escritorio convierte las órdenes del celular en pulsaciones de teclas y movimientos del mouse en tu computadora, y dibuja el puntero en una capa transparente sobre la pantalla. Para mostrarte en el celular qué estás controlando, lee el nombre del programa que está al frente y el título de su ventana; esa información solo viaja a tu celular. En Mac pide el permiso de Accesibilidad, que macOS exige a cualquier app que envíe teclas o mueva el mouse. La app no lee ni guarda el contenido de tus archivos o presentaciones.</p>
+
     <h2>Texto que escribes</h2>
-    <p>Lo que escribes en el teclado del control se envía directamente a tu computadora para insertarlo en la página y no se guarda en ningún lugar.</p>
+    <p>Lo que escribes en el teclado del control se envía directamente a tu computadora para insertarlo donde esté el cursor y no se guarda en ningún lugar.</p>
 
     <h2>Almacenamiento local</h2>
     <ul>
       <li><strong>En Chrome:</strong> tus ajustes (color del láser, tecla de avance, etc.) y el identificador de sesión se guardan con <code>chrome.storage</code>. Los ajustes pueden sincronizarse con tu cuenta de Chrome si tienes la sincronización activada.</li>
+      <li><strong>En la app de escritorio:</strong> tus ajustes y el identificador de sesión se guardan en un archivo de la carpeta de datos de la app, solo en tu computadora.</li>
       <li><strong>En el celular:</strong> el identificador de sesión, el cronómetro y tus preferencias se guardan en el almacenamiento local del navegador para reconectarte automáticamente. Puedes borrarlos con «Olvidar esta computadora».</li>
     </ul>
 
