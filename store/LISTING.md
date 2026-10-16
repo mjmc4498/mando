@@ -78,6 +78,13 @@ DETALLES CUIDADOS
 • Reconexión automática si la red se interrumpe.
 • Vibración al pulsar (en celulares compatibles).
 
+SÍGUENOS
+Facebook: https://www.facebook.com/presentazo/
+Instagram: https://www.instagram.com/presentazo/
+TikTok: https://www.tiktok.com/@presentazo
+YouTube: https://www.youtube.com/@presentazo
+X: https://x.com/presentazo
+
 Creado por Miguel Mogrovejo.
 ```
 

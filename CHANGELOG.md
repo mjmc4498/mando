@@ -11,6 +11,7 @@ debe ser mayor que el anterior para que la Chrome Web Store lo acepte.
   solo en la pestaña donde pulsas su ícono (`activeTab`). El acceso amplio es
   opcional y se pide con un clic solo para «Seguir la pestaña activa» o para
   presentaciones incrustadas desde otro sitio (p. ej. PowerPoint para la web).
+- Enlaces a las redes oficiales de Presentazo en la página de Ajustes.
 - **Funciona en redes restrictivas.** Si una red (de empresa, de un hotel o un
   Wi-Fi público) bloquea la conexión directa, Presentazo usa el servidor de
   retransmisión de Cloudflare. El tráfico sigue cifrado de extremo a extremo.

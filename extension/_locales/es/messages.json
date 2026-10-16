@@ -316,5 +316,8 @@
   },
   "allSitesRevoke": {
     "message": "Quitar acceso"
+  },
+  "followUs": {
+    "message": "Síguenos en nuestras redes oficiales"
   }
 }
