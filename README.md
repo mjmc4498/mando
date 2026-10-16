@@ -12,9 +12,13 @@ Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto
 
 ## Historia del nombre
 
-Al principio la app se llamaba **Mando**: fue mi idea inicial, un control remoto ("mando") para las presentaciones. Después de analizarlo y buscar un nombre más comercial y pegadizo, la renombré **Presentazo**, una idea que me surgió de tantas reuniones y anécdotas presentando frente a otros.
+Todo empezó como **Mando**. Era el nombre más directo para lo que quería construir: un control remoto —un *mando*— que viviera en el celular y me liberara de la computadora al presentar.
 
-El cambio llegó con la versión 1.1.0. Por eso las direcciones conservan el nombre original (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`): así la versión 1.0.0, publicada como Mando, sigue funcionando.
+Pero mientras el proyecto crecía, entendí que necesitaba algo más que un nombre descriptivo: necesitaba uno que se quedara en la memoria. Pensando en tantas reuniones en las que me ha tocado presentar —las que salieron redondas y las que dejaron anécdotas para contar—, apareció **Presentazo**.
+
+En nuestra forma de hablar, el sufijo *-azo* convierte algo en extraordinario: un gol se vuelve un *golazo*. **Presentazo** es justamente eso: la presentación que sale tan bien que la gente la recuerda. Y ese es el propósito de la app: que te muevas con libertad, señales lo importante y te concentres en tu público, no en el teclado.
+
+> **Nota técnica:** el cambio de nombre llegó con la versión 1.1.0. Las direcciones conservan el nombre original (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`) para que la versión 1.0.0, publicada como Mando, siga funcionando.
 
 ## Funciones
 
