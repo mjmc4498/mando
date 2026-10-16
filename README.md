@@ -6,6 +6,7 @@
 <p align="center">Controla tus presentaciones de Chrome desde el celular.<br>
 Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto y teclado.</p>
 <p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · antes llamado «Mando»</sub></p>
+<p align="center"><a href="https://www.facebook.com/presentazo/">Facebook</a> · <a href="https://www.instagram.com/presentazo/">Instagram</a> · <a href="https://www.tiktok.com/@presentazo">TikTok</a></p>
 
 ---
 
@@ -177,6 +178,14 @@ Presentazo usa el servidor público gratuito de PeerJS. Para no depender de él,
 - Chrome no permite extensiones en `chrome://`, en la Chrome Web Store ni en su visor de PDF integrado.
 - Los eventos son sintéticos: funcionan con las apps web de presentaciones, pero no pueden abrir menús nativos del sistema ni selectores de archivos.
 - PowerPoint o Keynote de escritorio no están en Chrome, así que no se pueden controlar.
+
+## Redes sociales
+
+Síguenos en nuestras redes oficiales:
+
+- **Facebook:** <https://www.facebook.com/presentazo/>
+- **Instagram:** <https://www.instagram.com/presentazo/>
+- **TikTok:** <https://www.tiktok.com/@presentazo>
 
 ## Licencia
 
