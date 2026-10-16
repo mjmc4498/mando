@@ -9,6 +9,7 @@
 
 import { execFileSync, spawn } from 'node:child_process';
 import fs from 'node:fs';
+import http from 'node:http';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
@@ -25,6 +26,46 @@ const check = (name, ok, detail = '') => {
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const load = (rel) => import(pathToFileURL(path.join(APP, rel)).href);
+
+async function waitFor(fn, timeout = 20000) {
+  const start = Date.now();
+  while (Date.now() - start < timeout) {
+    try { const v = await fn(); if (v) return v; } catch {}
+    await sleep(500);
+  }
+  return null;
+}
+
+// Dos páginas con títulos conocidos para probar las pestañas del navegador.
+const pages = http.createServer((req, res) => {
+  const name = req.url.includes('dos') ? 'Dos' : 'Uno';
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(`<!doctype html><title>Diapositivas ${name}</title><h1>${name}</h1>`);
+}).listen(0, '127.0.0.1');
+await new Promise((r) => pages.once('listening', r));
+const PAGE = (n) => `http://127.0.0.1:${pages.address().port}/${n}`;
+
+function openBrowser(exe) {
+  const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'perfil-'));
+  return spawn(exe, [`--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--new-window', PAGE('uno'), PAGE('dos')],
+    { detached: true, stdio: 'ignore' });
+}
+
+async function checkTabs(input, isBrowser) {
+  const win = await waitFor(() => (input.listWindows() || []).find((w) => isBrowser(w.app) && w.title.includes('Diapositivas')));
+  check('El navegador aparece en la lista de ventanas', !!win, win ? `${win.app}: ${win.title}` : '');
+  const tabs = await waitFor(async () => {
+    const list = (await input.listTabs()) || [];
+    const names = list.map((t) => t.title);
+    return names.includes('Diapositivas Uno') && names.includes('Diapositivas Dos') ? list : null;
+  }, 15000);
+  check('Listar las pestañas del navegador', !!tabs, tabs ? tabs.map((t) => `${t.title}${t.selected ? ' (visible)' : ''}`).join(' | ') : JSON.stringify(await input.listTabs()));
+  const uno = tabs?.find((t) => t.title === 'Diapositivas Uno');
+  if (!uno) return;
+  const ok = await input.activateTab(uno);
+  const front = await waitFor(() => { const f = input.frontmost(); return (f?.title || '').startsWith('Diapositivas Uno') ? f : null; }, 5000);
+  check('Cambiar a la pestaña elegida', ok && !!front, JSON.stringify(input.frontmost()));
+}
 
 async function windows() {
   const { createWindowsInput } = await load('src/input/windows.js');
@@ -60,17 +101,20 @@ async function windows() {
     Add-Type -AssemblyName UIAutomationClient
     $p = Get-Process notepad | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
     $root = [System.Windows.Automation.AutomationElement]::FromHandle($p.MainWindowHandle)
+    $best = ''
     $types = @([System.Windows.Automation.ControlType]::Document, [System.Windows.Automation.ControlType]::Edit)
     foreach ($t in $types) {
       $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, $t)
-      $el = $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $cond)
-      if ($el) {
+      foreach ($el in $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cond)) {
+        $text = ''
         $tp = $null
-        if ($el.TryGetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern, [ref]$tp)) { [Console]::Out.Write($tp.DocumentRange.GetText(-1)); exit 0 }
+        if ($el.TryGetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern, [ref]$tp)) { $text = $tp.DocumentRange.GetText(-1) }
         $vp = $null
-        if ($el.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$vp)) { [Console]::Out.Write($vp.Current.Value); exit 0 }
+        if (-not $text -and $el.TryGetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern, [ref]$vp)) { $text = $vp.Current.Value }
+        if ($text.Length -gt $best.Length) { $best = $text }
       }
-    }`;
+    }
+    [Console]::Out.Write($best)`;
   let typed = '';
   try {
     typed = execFileSync('powershell', ['-NoProfile', '-Command', `[Console]::OutputEncoding = [Text.Encoding]::UTF8; ${ps}`], { encoding: 'utf8' }).trim();
@@ -82,13 +126,7 @@ async function windows() {
   // ---------- ventanas y pestañas
   const chromeExe = ['C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe']
     .find((f) => fs.existsSync(f));
-  let browser = null;
-  if (chromeExe) {
-    const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'perfil-'));
-    browser = spawn(chromeExe, [`--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', '--new-window',
-      'data:text/html,<title>Diapositivas Uno</title>', 'data:text/html,<title>Diapositivas Dos</title>'], { detached: true, stdio: 'ignore' });
-    await sleep(6000);
-  }
+  const browser = chromeExe ? openBrowser(chromeExe) : null;
 
   const windowsList = input.listWindows();
   const pad = windowsList.find((w) => /notepad/i.test(w.app));
@@ -103,16 +141,7 @@ async function windows() {
   }
 
   if (chromeExe) {
-    const tabs = await input.listTabs();
-    const names = tabs.map((t) => t.title);
-    check('Listar las pestañas del navegador', names.includes('Diapositivas Uno') && names.includes('Diapositivas Dos'), names.join(' | '));
-    const uno = tabs.find((t) => t.title === 'Diapositivas Uno');
-    if (uno) {
-      const ok = await input.activateTab(uno);
-      await sleep(600);
-      const front = input.frontmost();
-      check('Cambiar a la pestaña elegida', ok && (front?.title || '').startsWith('Diapositivas Uno'), JSON.stringify(front));
-    }
+    await checkTabs(input, (app) => /^(chrome|msedge)\.exe$/i.test(app));
   } else {
     console.log('INFO  No hay Chrome ni Edge: no se prueban las pestañas.');
   }
@@ -145,8 +174,23 @@ async function mac() {
   check('Pulsar una tecla', input.key('Escape') === true);
   const front = input.frontmost();
   check('Reconocer el programa al frente', !!front?.app, JSON.stringify(front));
-  const wins = input.listWindows() || [];
-  check('Listar las ventanas abiertas', wins.length > 0, wins.map((w) => `${w.app}: ${w.title}`).slice(0, 8).join(' | '));
+  spawn('open', [os.homedir()]); // una ventana del Finder
+  const finder = await waitFor(() => (input.listWindows() || []).find((w) => w.app === 'Finder'));
+  check('Listar las ventanas abiertas', !!finder, (input.listWindows() || []).map((w) => `${w.app}: ${w.title}`).slice(0, 8).join(' | '));
+
+  const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  if (fs.existsSync(chrome)) {
+    const browser = openBrowser(chrome);
+    await checkTabs(input, (app) => app === 'Google Chrome');
+    if (finder) {
+      input.activateWindow(finder);
+      const back = await waitFor(() => (input.frontmost()?.app === 'Finder' ? true : null), 5000);
+      check('Traer una ventana al frente', !!back, JSON.stringify(input.frontmost()));
+    }
+    try { process.kill(browser.pid); } catch {}
+  } else {
+    console.log('INFO  No hay Chrome: no se prueban las pestañas.');
+  }
 }
 
 console.log(`Sistema: ${process.platform} ${process.arch}`);
@@ -158,6 +202,7 @@ try {
   check('Sin errores inesperados', false, err.stack || String(err));
 }
 
+pages.close();
 const failed = results.filter((r) => !r.ok);
 console.log(`\n${results.length - failed.length}/${results.length} comprobaciones correctas`);
 process.exit(failed.length ? 1 : 0);
