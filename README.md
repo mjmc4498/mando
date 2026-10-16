@@ -10,7 +10,11 @@ Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto
 
 ---
 
-> **Nombre:** desde la versión 1.1.0 la app se llama **Presentazo**. Las direcciones (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`) se mantienen para que la versión 1.0.0 siga funcionando.
+## Historia del nombre
+
+Al principio la app se llamaba **Mando**: fue mi idea inicial, un control remoto ("mando") para las presentaciones. Después de analizarlo y buscar un nombre más comercial y pegadizo, la renombré **Presentazo**, una idea que me surgió de tantas reuniones y anécdotas presentando frente a otros.
+
+El cambio llegó con la versión 1.1.0. Por eso las direcciones conservan el nombre original (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`): así la versión 1.0.0, publicada como Mando, sigue funcionando.
 
 ## Funciones
 
