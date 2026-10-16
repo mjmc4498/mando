@@ -35,6 +35,10 @@ const check = (name, ok, detail = '') => {
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+// Capturas del panel solo como referencia: si la ventana está minimizada u
+// oculta, el sistema no la dibuja y la captura no debe frenar la prueba.
+const shot = (page, file) => Promise.race([page.screenshot({ path: file }), sleep(5000)]).catch(() => {});
+
 async function waitFor(fn, { timeout = 15000, interval = 150 } = {}) {
   const start = Date.now();
   while (Date.now() - start < timeout) {
@@ -115,7 +119,7 @@ try {
   const panelText = (sel) => panel.evaluate((x) => document.querySelector(x)?.textContent || '', sel);
   const qr = await panel.evaluate(() => document.querySelectorAll('#qr svg rect').length);
   check('El panel muestra el código QR', qr > 100, `${qr} módulos`);
-  await panel.screenshot({ path: path.join(OUT, '1-panel.png') });
+  await shot(panel, path.join(OUT, '1-panel.png'));
 
   // ---------- celular
   phoneBrowser = await puppeteer.launch({ headless: process.env.HEADFUL ? false : true, args: ['--window-size=420,900'] });
@@ -134,7 +138,7 @@ try {
   }, { timeout: 5000 });
   check('El panel muestra el celular conectado', !!panelStatus);
   check('El panel muestra qué se controla', !!(await waitFor(async () => (await panelText('#control-sub')) === 'Ahora: Keynote · Presentación de prueba', { timeout: 4000 })), await panelText('#control-sub'));
-  await panel.screenshot({ path: path.join(OUT, '2-panel-conectado.png') });
+  await shot(panel, path.join(OUT, '2-panel-conectado.png'));
 
   const hasKey = (name, mods) => since().some((e) => e.a === 'key' && e.name === name && (!mods || JSON.stringify(e.mods) === JSON.stringify(mods)));
 
@@ -258,7 +262,7 @@ try {
   await clickPanel('#control-open');
   const windowsList = await waitFor(async () => { const t = await optionTitles(); return t.length >= 3 ? t : null; }, { timeout: 5000 });
   check('El selector lista los programas abiertos', !!windowsList, (windowsList || []).join(' | '));
-  await panel.screenshot({ path: path.join(OUT, '3-elegir-programa.png') });
+  await shot(panel, path.join(OUT, '3-elegir-programa.png'));
   setMark();
   await chooseOption('Ventas 2026.pptx');
   check('Elegir un programa lo trae al frente', !!(await waitFor(() => hasEntry((e) => e.a === 'activar' && e.id === '2:0'), { timeout: 4000 })));
@@ -274,7 +278,7 @@ try {
   await clickPanel('#pick-tabs [data-kind="tabs"]');
   const tabsList = await waitFor(async () => { const t = await optionTitles(); return t.includes('Correo') ? t : null; }, { timeout: 5000 });
   check('El selector lista las pestañas del navegador', !!tabsList, (tabsList || []).join(' | '));
-  await panel.screenshot({ path: path.join(OUT, '4-elegir-pestana.png') });
+  await shot(panel, path.join(OUT, '4-elegir-pestana.png'));
   setMark();
   await chooseOption('Correo');
   check('Elegir una pestaña la muestra en el navegador', !!(await waitFor(() => hasEntry((e) => e.a === 'pestaña' && e.title === 'Correo'), { timeout: 4000 })));
@@ -284,7 +288,7 @@ try {
   await clickPanel('#pick-tabs [data-kind="screens"]');
   const screens = await waitFor(async () => { const t = await optionTitles(); return t.length ? t : null; }, { timeout: 5000 });
   check('El selector lista las pantallas', !!screens, (screens || []).join(' | '));
-  await panel.screenshot({ path: path.join(OUT, '5-elegir-pantalla.png') });
+  await shot(panel, path.join(OUT, '5-elegir-pantalla.png'));
   await panel.evaluate(() => document.querySelector('#pick-list .identify').click());
   const ident = await waitFor(() => overlay.evaluate(() => (document.querySelector('.demo').classList.contains('on') ? document.querySelector('.demo span').textContent : null)), { timeout: 4000 });
   check('Identificar muestra el número en la pantalla', ident === 'Pantalla 1', ident);
@@ -311,7 +315,7 @@ try {
   await clickPanel('#laserColor [data-value="#0A84FF"]');
   const color = await waitFor(() => overlay.evaluate(() => (document.body.style.getPropertyValue('--c') === '#0A84FF' ? true : null)), { timeout: 3000 });
   check('El color del láser llega a la capa', !!color);
-  await panel.screenshot({ path: path.join(OUT, '6-ajustes.png') });
+  await shot(panel, path.join(OUT, '6-ajustes.png'));
   await clickPanel('#toggle-settings');
 
   // ---------- código nuevo

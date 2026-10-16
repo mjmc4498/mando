@@ -173,6 +173,30 @@ function eachElement(el, attr, fn) {
   }
 }
 
+// Ventana normal que está más al frente según el servidor de ventanas (sirve
+// cuando un programa ocupado no responde a la API de Accesibilidad).
+function frontWindowInfo() {
+  const list = CGWindowListCopyWindowInfo(1 | 16, 0); // solo visibles, sin el escritorio
+  if (!list) return null;
+  try {
+    const n = CFArrayGetCount(list);
+    for (let i = 0; i < n; i++) {
+      const d = CFArrayGetValueAtIndex(list, i);
+      if (readNumber(CFDictionaryGetValue(d, cfString('kCGWindowLayer'))) !== 0) continue;
+      const pid = readNumber(CFDictionaryGetValue(d, cfString('kCGWindowOwnerPID')));
+      if (!pid || pid === process.pid) continue;
+      const b = CFDictionaryGetValue(d, cfString('kCGWindowBounds'));
+      const num = (k) => Math.round(readNumber(CFDictionaryGetValue(b, cfString(k))) || 0);
+      const bounds = b ? { x: num('X'), y: num('Y'), width: num('Width'), height: num('Height') } : null;
+      if (bounds && (bounds.width < 80 || bounds.height < 60)) continue;
+      return { pid, app: readString(CFDictionaryGetValue(d, cfString('kCGWindowOwnerName'))), bounds };
+    }
+    return null;
+  } finally {
+    CFRelease(list);
+  }
+}
+
 // Programas con ventanas, de adelante hacia atrás (lo que se ve primero, primero).
 export function appsByZOrder() {
   const list = CGWindowListCopyWindowInfo(16, 0); // todas, sin elementos del escritorio
@@ -384,7 +408,16 @@ export function createMacInput() {
     frontmost() {
       if (!AXIsProcessTrusted()) return null;
       const appEl = copyAttr(ensureSystemWide(), 'AXFocusedApplication');
-      if (!appEl) return null;
+      if (!appEl) {
+        const win = frontWindowInfo();
+        if (!win) return null;
+        const title = withApp(win.pid, (el) => {
+          const focused = copyAttr(el, 'AXFocusedWindow');
+          if (!focused) return '';
+          try { return attrString(focused, 'AXTitle'); } finally { CFRelease(focused); }
+        }) || '';
+        return { ...win, title };
+      }
       try {
         const pid = [0];
         AXUIElementGetPid(appEl, pid);
