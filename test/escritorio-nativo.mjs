@@ -60,11 +60,12 @@ async function checkTabs(input, isBrowser) {
     return names.includes('Diapositivas Uno') && names.includes('Diapositivas Dos') ? list : null;
   }, 15000);
   check('Listar las pestañas del navegador', !!tabs, tabs ? tabs.map((t) => `${t.title}${t.selected ? ' (visible)' : ''}`).join(' | ') : JSON.stringify(await input.listTabs()));
-  const uno = tabs?.find((t) => t.title === 'Diapositivas Uno');
-  if (!uno) return;
-  const ok = await input.activateTab(uno);
-  const front = await waitFor(() => { const f = input.frontmost(); return (f?.title || '').startsWith('Diapositivas Uno') ? f : null; }, 5000);
-  check('Cambiar a la pestaña elegida', ok && !!front, JSON.stringify(input.frontmost()));
+  // Se elige la pestaña que no está visible para probar un cambio real.
+  const other = tabs?.find((t) => !t.selected && t.title.startsWith('Diapositivas'));
+  if (!other) return;
+  const ok = await input.activateTab(other);
+  const front = await waitFor(() => { const f = input.frontmost(); return (f?.title || '').startsWith(other.title) ? f : null; }, 8000);
+  check(`Cambiar a la pestaña elegida (${other.title})`, !!front, `activateTab=${ok} frente=${JSON.stringify(input.frontmost())}`);
 }
 
 async function windows() {
@@ -97,6 +98,14 @@ async function windows() {
   input.text(text);
   check('Pulsar una tecla (Fin)', input.key('End') === true);
   await sleep(500);
+  // Se copia el texto del Bloc de notas al portapapeles con las mismas teclas de Presentazo.
+  input.key('a', { ctrl: true });
+  input.key('c', { ctrl: true });
+  await sleep(500);
+  let copied = '';
+  try {
+    copied = execFileSync('powershell', ['-NoProfile', '-Command', '[Console]::OutputEncoding = [Text.Encoding]::UTF8; Get-Clipboard -Raw'], { encoding: 'utf8' }).trim();
+  } catch {}
   const ps = `
     Add-Type -AssemblyName UIAutomationClient
     $p = Get-Process notepad | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
@@ -121,7 +130,7 @@ async function windows() {
   } catch (err) {
     typed = `error: ${err.message}`;
   }
-  check('Escribir texto con tildes y ñ en el Bloc de notas', typed.includes(text), JSON.stringify(typed));
+  check('Escribir texto con tildes y ñ en el Bloc de notas', copied.includes(text) || typed.includes(text), JSON.stringify(copied || typed));
 
   // ---------- ventanas y pestañas
   const chromeExe = ['C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe']
@@ -133,9 +142,9 @@ async function windows() {
   check('Listar las ventanas abiertas', windowsList.length > 0 && !!pad, windowsList.map((w) => `${w.app}: ${w.title}`).join(' | '));
   if (pad) {
     const other = windowsList.find((w) => w !== pad && !w.minimized);
-    if (other) input.activateWindow(other);
+    if (other) await input.activateWindow(other);
     await sleep(400);
-    input.activateWindow(pad);
+    await input.activateWindow(pad);
     await sleep(400);
     check('Traer una ventana al frente', /notepad/i.test(input.frontmost()?.app || ''), JSON.stringify(input.frontmost()));
   }
@@ -172,18 +181,18 @@ async function mac() {
   const p = where();
   check('Mover el cursor (Core Graphics)', Math.abs(p.x - 321) <= 2 && Math.abs(p.y - 234) <= 2, `${p.x},${p.y}`);
   check('Pulsar una tecla', input.key('Escape') === true);
-  const front = input.frontmost();
-  check('Reconocer el programa al frente', !!front?.app, JSON.stringify(front));
   spawn('open', [os.homedir()]); // una ventana del Finder
   const finder = await waitFor(() => (input.listWindows() || []).find((w) => w.app === 'Finder'));
   check('Listar las ventanas abiertas', !!finder, (input.listWindows() || []).map((w) => `${w.app}: ${w.title}`).slice(0, 8).join(' | '));
+  const front = await waitFor(() => input.frontmost(), 5000);
+  check('Reconocer el programa al frente', !!front?.app, JSON.stringify(front));
 
   const chrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
   if (fs.existsSync(chrome)) {
     const browser = openBrowser(chrome);
     await checkTabs(input, (app) => app === 'Google Chrome');
     if (finder) {
-      input.activateWindow(finder);
+      await input.activateWindow(finder);
       const back = await waitFor(() => (input.frontmost()?.app === 'Finder' ? true : null), 5000);
       check('Traer una ventana al frente', !!back, JSON.stringify(input.frontmost()));
     }

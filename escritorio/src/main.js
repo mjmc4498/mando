@@ -346,7 +346,7 @@ async function ensureTarget() {
 
   if (target.kind === 'window') {
     if (selfFront || !front || front.pid !== target.pid) {
-      input.activateWindow(target);
+      await input.activateWindow(target);
       await wait(250);
     }
     return;
@@ -359,7 +359,7 @@ async function ensureTarget() {
     if (!sameApp || Date.now() > tabRetryAt) {
       if (!(await input.activateTab(target))) {
         tabRetryAt = Date.now() + 10000;
-        input.activateWindow(target.window);
+        await input.activateWindow(target.window);
       }
       await wait(250);
     }
@@ -372,7 +372,7 @@ async function ensureTarget() {
     if (display && !onScreen) {
       const win = (input.listWindows() || []).find((w) => !w.minimized && displayOf(w.bounds)?.id === display.id);
       if (win) {
-        input.activateWindow(win);
+        await input.activateWindow(win);
         await wait(250);
         return;
       }
@@ -723,7 +723,7 @@ async function selectTarget(sel = {}) {
     if (!w) return;
     target = { ...w, kind: 'window', label: w.title ? `${name(w.app)} · ${w.title}` : name(w.app), displayId: String(displayOf(w.bounds)?.id ?? '') || null };
     store.setSettings({ display: 'auto' });
-    input.activateWindow(w);
+    await input.activateWindow(w);
   } else if (sel.kind === 'tab') {
     const t = sources.tabs.find((x) => x.id === sel.id);
     if (!t) return;

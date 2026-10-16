@@ -67,7 +67,7 @@ const KEYCODES = {
   PageUp: 116, PageDown: 121, Home: 115, End: 119,
   Enter: 36, Escape: 53, Backspace: 51, Delete: 117, Tab: 48, ' ': 49,
   F5: 96, F11: 103,
-  a: 0, b: 11, f: 3, l: 37, p: 35, w: 13,
+  a: 0, b: 11, c: 8, f: 3, l: 37, p: 35, w: 13,
 };
 
 export const BROWSER = /^(google chrome|chromium|microsoft edge|brave browser|safari|firefox|opera|vivaldi|arc)$/i;
@@ -113,8 +113,9 @@ let systemWide = null;
 function ensureSystemWide() {
   if (!systemWide) {
     systemWide = AXUIElementCreateSystemWide();
-    // Una app colgada no debe bloquear a Presentazo.
-    AXUIElementSetMessagingTimeout(systemWide, 0.25);
+    // Una app colgada no debe bloquear a Presentazo por mucho tiempo. Chrome
+    // tarda en responder la primera vez que se le consulta.
+    AXUIElementSetMessagingTimeout(systemWide, 1.0);
   }
   return systemWide;
 }
@@ -261,7 +262,8 @@ function pressTab(win, title) {
         eachElement(el, 'AXChildren', (child) => {
           const name = attrString(child, 'AXTitle') || attrString(child, 'AXDescription');
           if (name !== title) return undefined;
-          pressed = AXUIElementPerformAction(child, cfString('AXPress')) === 0;
+          pressed = AXUIElementPerformAction(child, cfString('AXPress')) === 0
+            || AXUIElementSetAttributeValue(child, cfString('AXSelected'), kCFBooleanTrue) === 0;
           return false;
         });
         if (pressed) return true;

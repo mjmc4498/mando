@@ -62,7 +62,7 @@ const VKEYS = {
   PageUp: [0x21, true], PageDown: [0x22, true], Home: [0x24, true], End: [0x23, true], Delete: [0x2e, true],
   Enter: [0x0d], Escape: [0x1b], Backspace: [0x08], Tab: [0x09], ' ': [0x20],
   F5: [0x74], F11: [0x7a],
-  a: [0x41], b: [0x42], f: [0x46], l: [0x4c], p: [0x50], w: [0x57],
+  a: [0x41], b: [0x42], c: [0x43], f: [0x46], l: [0x4c], p: [0x50], w: [0x57],
 };
 const MODS = { ctrl: 0x11, shift: 0x10, alt: 0x12, meta: 0x5b };
 const VK_MENU = 0x12;
@@ -133,6 +133,8 @@ function powershell(script, timeout = 8000) {
   });
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 const b64 = (text) => Buffer.from(String(text), 'utf8').toString('base64');
 
 const UIA_HEADER = `
@@ -195,11 +197,19 @@ export function createWindowsInput({ toPhysical, toDip = (r) => r }) {
   }
 
   // Trae una ventana al frente. Windows limita esto para evitar robos de foco;
-  // se usan las mismas técnicas que las herramientas de accesibilidad.
-  function forceForeground(hwnd) {
+  // se usan las mismas técnicas que las herramientas de accesibilidad. El cambio
+  // no es instantáneo: se espera un momento a que la ventana quede al frente.
+  async function forceForeground(hwnd) {
     if (!IsWindow(hwnd)) return false;
     if (IsIconic(hwnd)) ShowWindow(hwnd, 9); // SW_RESTORE
     if (GetForegroundWindow() === hwnd) return true;
+    const isFront = async () => {
+      for (let i = 0; i < 8; i++) {
+        if (GetForegroundWindow() === hwnd) return true;
+        await sleep(40);
+      }
+      return false;
+    };
     const me = GetCurrentThreadId();
     const fg = GetForegroundWindow();
     const fgThread = fg ? GetWindowThreadProcessId(fg, [0]) : 0;
@@ -207,12 +217,11 @@ export function createWindowsInput({ toPhysical, toDip = (r) => r }) {
     BringWindowToTop(hwnd);
     SetForegroundWindow(hwnd);
     if (fgThread && fgThread !== me) AttachThreadInput(me, fgThread, 0);
-    if (GetForegroundWindow() !== hwnd) {
-      // Dos toques de Alt: liberan el bloqueo sin dejar abierto ningún menú.
-      send([keyInput(VK_MENU, false), keyInput(VK_MENU, true), keyInput(VK_MENU, false), keyInput(VK_MENU, true)]);
-      SetForegroundWindow(hwnd);
-    }
-    return GetForegroundWindow() === hwnd;
+    if (await isFront()) return true;
+    // Dos toques de Alt: liberan el bloqueo sin dejar abierto ningún menú.
+    send([keyInput(VK_MENU, false), keyInput(VK_MENU, true), keyInput(VK_MENU, false), keyInput(VK_MENU, true)]);
+    SetForegroundWindow(hwnd);
+    return isFront();
   }
 
   return {
@@ -321,14 +330,15 @@ ConvertTo-Json -InputObject @($out) -Compress`);
     },
 
     // target: { id } tal como lo devolvió listWindows.
-    activateWindow(target) {
-      try { return forceForeground(BigInt(target.id)); } catch { return false; }
+    async activateWindow(target) {
+      try { return await forceForeground(BigInt(target.id)); } catch { return false; }
     },
 
     // target: { window: { id }, title } tal como lo devolvió listTabs.
     async activateTab(target) {
       const hwnd = BigInt(target.window.id);
-      if (!forceForeground(hwnd)) return false;
+      if (!IsWindow(hwnd)) return false;
+      await forceForeground(hwnd);
       const ok = await powershell(`${UIA_HEADER}
 $name = Text '${b64(target.title)}'
 $done = $false
