@@ -1,4 +1,4 @@
-# Ficha para la Chrome Web Store — Presentazo
+# Ficha para la Chrome Web Store: Presentazo
 
 > Desde la versión 1.1.0 la extensión se llama **Presentazo** (antes «Mando»). El nombre de la ficha se actualiza solo al publicarse la 1.1.0, porque sale del paquete.
 
@@ -159,8 +159,8 @@ Solo se solicita, con un clic del usuario, en dos casos: si activa «Seguir la p
 
 **¿Usas código remoto?** → **No.** Todo el JavaScript va incluido en el paquete (PeerJS y el generador de QR están en `lib/`). El servidor de señalización de PeerJS y el servicio de Cloudflare que entrega credenciales temporales de retransmisión solo intercambian datos, no código.
 
-**Uso de datos** — marca:
-- ☑ **Contenido del sitio web** — el título de la pestaña controlada se muestra en el celular del propio usuario (viaja cifrado de punto a punto; no llega al desarrollador).
+**Uso de datos**, marca:
+- ☑ **Contenido del sitio web**: el título de la pestaña controlada se muestra en el celular del propio usuario (viaja cifrado de punto a punto; no llega al desarrollador).
 
 Y las tres certificaciones:
 - ☑ No vendo ni transfiero datos de usuarios a terceros fuera de los casos de uso aprobados.

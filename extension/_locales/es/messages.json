@@ -6,7 +6,7 @@
     "message": "Controla tus presentaciones desde el celular: escanea un QR y usa avance, puntero láser, mouse remoto y teclado."
   },
   "actionTitle": {
-    "message": "Presentazo — controla esta presentación desde tu celular"
+    "message": "Presentazo: controla esta presentación desde tu celular"
   },
   "cmdOpen": {
     "message": "Mostrar el código QR de Presentazo"

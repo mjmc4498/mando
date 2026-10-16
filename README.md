@@ -12,13 +12,13 @@ Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto
 
 ## Historia del nombre
 
-Todo empezó como **Mando**. Era el nombre más directo para lo que quería construir: un control remoto —un *mando*— que viviera en el celular y me liberara de la computadora al presentar.
+Al principio la llamé **Mando**, porque eso era lo que quería hacer: un mando, un control remoto en el celular para no estar pegado a la computadora cuando presento.
 
-Pero mientras el proyecto crecía, entendí que necesitaba algo más que un nombre descriptivo: necesitaba uno que se quedara en la memoria. Pensando en tantas reuniones en las que me ha tocado presentar —las que salieron redondas y las que dejaron anécdotas para contar—, apareció **Presentazo**.
+Con el tiempo sentí que el nombre era muy genérico y fácil de olvidar. Quería algo más comercial y pegadizo. Después de tantas reuniones y anécdotas presentando, se me ocurrió **Presentazo**.
 
-En nuestra forma de hablar, el sufijo *-azo* convierte algo en extraordinario: un gol se vuelve un *golazo*. **Presentazo** es justamente eso: la presentación que sale tan bien que la gente la recuerda. Y ese es el propósito de la app: que te muevas con libertad, señales lo importante y te concentres en tu público, no en el teclado.
+Me gusta porque suena a lo que todos queremos cuando exponemos: que nos salga un presentazo, así como decimos golazo cuando un gol sale bonito. Esa es la idea de la app, que presentes tranquilo, moviéndote por la sala y pendiente de tu público.
 
-> **Nota técnica:** el cambio de nombre llegó con la versión 1.1.0. Las direcciones conservan el nombre original (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`) para que la versión 1.0.0, publicada como Mando, siga funcionando.
+> Nota: el nombre cambió en la versión 1.1.0. Las direcciones siguen usando "mando" (`mjmc4498.github.io/mando`, el repositorio `mando` y el Worker `mando-turn`) para que la versión 1.0.0, que se publicó como Mando, siga funcionando.
 
 ## Funciones
 
@@ -199,4 +199,4 @@ Síguenos en nuestras redes oficiales:
 
 ## Licencia
 
-© 2026 Miguel Mogrovejo. Incluye PeerJS y QR Code Generator (MIT) — ver `extension/THIRD_PARTY_NOTICES.txt`.
+© 2026 Miguel Mogrovejo. Incluye PeerJS y QR Code Generator, ambos con licencia MIT (ver `extension/THIRD_PARTY_NOTICES.txt`).

@@ -3,7 +3,7 @@
 Todas las versiones de la extensión Presentazo. El número de versión de cada paquete
 debe ser mayor que el anterior para que la Chrome Web Store lo acepte.
 
-## 1.1.0 — 15 de octubre de 2026
+## 1.1.0 (15 de octubre de 2026)
 
 - **Nuevo nombre: Presentazo** (antes «Mando»). Las direcciones web y el
   funcionamiento no cambian.
@@ -24,7 +24,7 @@ debe ser mayor que el anterior para que la Chrome Web Store lo acepte.
 - Reconexión más segura: si el servidor tarda en liberar la sesión, Presentazo
   reintenta sin desconectar a los celulares que ya están conectados.
 
-## 1.0.0 — 15 de octubre de 2026
+## 1.0.0 (15 de octubre de 2026)
 
 Primera versión, publicada con el nombre «Mando»: control de diapositivas, puntero láser, foco, lápiz, mouse
 remoto y teclado desde el celular, conectado por código QR.
