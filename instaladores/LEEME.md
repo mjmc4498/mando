@@ -2,6 +2,8 @@
 
 Presentazo también funciona como app para tu computadora. Con ella controlas desde el celular cualquier presentación: PowerPoint, Keynote, Presentaciones de Google, un PDF o el programa que uses. En el celular se abre el mismo control remoto que usa la extensión de Chrome.
 
+**Descarga los instaladores aquí:** <https://github.com/mjmc4498/mando/releases/latest>
+
 ## Qué archivo usar
 
 Cada sistema tiene dos versiones: **instalador** (la app se instala como cualquier programa) y **portable** (se abre directo, sin instalar).

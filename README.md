@@ -42,7 +42,7 @@ Además de la extensión, Presentazo tiene una app para Windows y Mac. Sirve par
 - El botón para iniciar la presentación reconoce PowerPoint, Keynote, LibreOffice Impress, Acrobat, Vista Previa y Presentaciones de Google.
 - En Mac pide el permiso de Accesibilidad, que macOS exige para enviar teclas y mover el mouse. En Windows no pide permisos.
 
-Los instaladores están en [`instaladores/`](instaladores/LEEME.md), separados por sistema (Windows, Mac Intel y Mac con chip M) y por tipo (instalador o portable). El código está en `escritorio/`.
+**Descarga:** <https://github.com/mjmc4498/mando/releases/latest>. Hay instalador y versión portable para Windows, Mac Intel y Mac con chip M; [`instaladores/LEEME.md`](instaladores/LEEME.md) explica cuál usar. El código está en `escritorio/`.
 
 ## Cómo funciona
 
