@@ -59,8 +59,8 @@ CÓMO FUNCIONA
 2. Haz clic en el ícono de Presentazo (o pulsa Alt+Shift+M) y escanea el código QR.
 3. El control se abre en el navegador del celular. ¡A presentar!
 
-COMPATIBLE CON
-Google Slides, PowerPoint para la web, Canva, Pitch, Figma Slides, Gamma, Prezi, reveal.js, Keynote en iCloud y cualquier página que use el teclado para avanzar.
+DÓNDE FUNCIONA
+Con las presentaciones que abres en Chrome y que avanzan con el teclado, como Google Slides o PowerPoint para la web.
 
 FUNCIONA EN CUALQUIER RED
 • Conexión directa entre tu celular y tu computadora, en la misma red Wi-Fi o desde datos móviles.
@@ -79,6 +79,7 @@ DETALLES CUIDADOS
 • Vibración al pulsar (en celulares compatibles).
 
 SÍGUENOS
+Sitio web: https://presentazo.com/
 Facebook: https://www.facebook.com/presentazo/
 Instagram: https://www.instagram.com/presentazo/
 TikTok: https://www.tiktok.com/@presentazo
@@ -113,11 +114,11 @@ Creado por Miguel Mogrovejo.
 
 | Campo | Valor |
 |---|---|
-| Sitio web oficial | `https://mjmc4498.github.io/mando/` |
+| Sitio web oficial | `https://presentazo.com/` |
 | URL de asistencia | `https://github.com/mjmc4498/mando/issues` |
 | Política de privacidad | `https://mjmc4498.github.io/mando/privacy.html` |
 
-> Las tres direcciones ya están publicadas. Conservan «mando» para que la versión 1.0.0 siga funcionando.
+> Las tres direcciones ya están publicadas. La asistencia y la privacidad conservan «mando» para que la versión 1.0.0 siga funcionando.
 
 ---
 
