@@ -6,6 +6,7 @@
 <p align="center">Controla tus presentaciones desde el celular: en Chrome con la extensión y en Windows o Mac con la app de escritorio.<br>
 Escanea un QR y usa avance de diapositivas, puntero láser, lápiz, mouse remoto y teclado.</p>
 <p align="center"><sub>Creado por <b>Miguel Mogrovejo</b> · v1.1.0 · antes llamado «Mando»</sub></p>
+<p align="center"><a href="https://presentazo.com/"><b>presentazo.com</b></a></p>
 <p align="center"><a href="https://www.facebook.com/presentazo/">Facebook</a> · <a href="https://www.instagram.com/presentazo/">Instagram</a> · <a href="https://www.tiktok.com/@presentazo">TikTok</a> · <a href="https://www.youtube.com/@presentazo">YouTube</a> · <a href="https://x.com/presentazo">X</a></p>
 
 ---
@@ -214,10 +215,11 @@ Presentazo usa el servidor público gratuito de PeerJS. Para no depender de él,
 - Los eventos son sintéticos: funcionan con las apps web de presentaciones, pero no pueden abrir menús nativos del sistema ni selectores de archivos.
 - La extensión no controla PowerPoint o Keynote de escritorio porque no están en Chrome. Para eso está la app de escritorio.
 
-## Redes sociales
+## Sitio web y redes sociales
 
-Síguenos en nuestras redes oficiales:
+Visita nuestra página web y síguenos en nuestras redes oficiales:
 
+- **Sitio web:** <https://presentazo.com/>
 - **Facebook:** <https://www.facebook.com/presentazo/>
 - **Instagram:** <https://www.instagram.com/presentazo/>
 - **TikTok:** <https://www.tiktok.com/@presentazo>
