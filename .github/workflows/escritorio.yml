@@ -67,5 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: resultados-${{ matrix.sistema }}
-          path: test/out/escritorio
+          path: |
+            test/out/escritorio
+            !test/out/escritorio/datos
           if-no-files-found: ignore
