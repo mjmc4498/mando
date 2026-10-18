@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Presentazo</title>
+  <script>
+    // Presentazo se mudó a /presentazo/. Se conservan la ruta, la consulta y el
+    // fragmento (#id=…&k=…), que lleva la clave de la sesión del código QR.
+    var resto = location.pathname.replace(/^\/mando\/?/, '');
+    location.replace('https://mjmc4498.github.io/presentazo/' + resto + location.search + location.hash);
+  </script>
+  <noscript><meta http-equiv="refresh" content="0; url=https://mjmc4498.github.io/presentazo/"></noscript>
+  <style>body{margin:0;display:grid;place-items:center;min-height:100vh;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#0b0b0c;background:#fff}a{color:#ff3b30}</style>
+</head>
+<body>
+  <p>Presentazo ahora está en <a href="https://mjmc4498.github.io/presentazo/">mjmc4498.github.io/presentazo</a>.</p>
+</body>
+</html>
